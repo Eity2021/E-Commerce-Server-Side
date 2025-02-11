@@ -3,7 +3,8 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const authRouter = require("./routes/auth/auth-routes")
-const dotenv = require('dotenv')
+const dotenv = require('dotenv');
+const productRouter = require("./routes/product/productRoute");
 
 dotenv.config()
 mongoose
@@ -33,6 +34,7 @@ app. use(
 app.use(cookieParser());
 app.use(express.json());
 app.use('/api/auth',authRouter )
+app.use('/api/product',productRouter )
 
 app.get('/' , (req,res) => {
   res.send("api working")

@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const validator = require("validator");
-const userModal = require("../../models/UserModel");
+const userModal = require("../../models/userModel");
 
 const createToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "7d" });
@@ -9,11 +9,9 @@ const createToken = (id) => {
 
 // Register User
 const registerUser = async (req, res) => {
-  
   const { name, email, password } = req.body;
 
   try {
- 
     // Check if email already exists
     const checkEmail = await userModal.findOne({ email });
     if (checkEmail) {
@@ -25,7 +23,7 @@ const registerUser = async (req, res) => {
     }
 
     // Validate email format
-    if (!validator.isEmail(email)) {  
+    if (!validator.isEmail(email)) {
       return res.status(400).json({
         success: false,
         message: "Please enter a valid email",
@@ -45,8 +43,8 @@ const registerUser = async (req, res) => {
 
     // Save new user
     const newUser = new userModal({
-      name:name,
-      email:email,
+      name: name,
+      email: email,
       password: hashPassword,
     });
 
@@ -67,7 +65,7 @@ const registerUser = async (req, res) => {
       message: "Registration successful",
     });
   } catch (e) {
-    console.error("Error in registerUser:", e); 
+    console.error("Error in registerUser:", e);
     res.status(500).json({
       data: null,
       success: false,
@@ -79,75 +77,52 @@ const registerUser = async (req, res) => {
 //login
 
 const loginUser = async (req, res) => {
-  // const { email, password } = req.body;
-  // try {
-  //   const checkUser = await userModal.findOne({ email });
-  //   if (!checkUser)
-  //     return res.json({
-  //       success: false,
-  //       message: "User doesn't  exists! Please Register",
-  //     });
+  const { email, password } = req.body;
+  try {
+    const checkUser = await userModal.findOne({ email });
 
-  //   const tokenFromCookie = req.cookies.token;
+    if (!checkUser)
+      return res.json({
+        success: false,
+        message: "User doesn't  exists! Please Register",
+      });
 
-  //   if (tokenFromCookie) {
-  //     try {
-  //       const decode = jwt.verify(tokenFromCookie, "CLIENT_SECRET_KEY");
-  //       if (decode.email === checkUser.email) {
-  //         return res.json({
-  //           success: false,
-  //           message: "user is already logged in",
-  //         });
-  //       }
-  //     } catch (err) {
-  //       // Token is invalid or expired, continue with login
-  //     }
-  //   }
+    const checkPasswordMatch = await bcrypt.compare(
+      password,
+      checkUser.password
+    );
 
-  //   const checkPasswordMatch = await bcrypt.compare(
-  //     password,
-  //     checkUser.password
-  //   );
-  //   if (!checkPasswordMatch)
-  //     return res.json({
-  //       success: false,
-  //       message: "Incorrect password! Please try again",
-  //     });
+   if( checkPasswordMatch) {
+    const token = createToken(checkUser._id)
+    res.json({
+      code:200,
+      success:true,
+      message:"login Successfully",
+      data:{
+        token
+      }
 
-  //   const token = jwt.sign(
-  //     {
-  //       id: checkUser._id,
-  //       // role: checkUser.role,
-  //       email: checkUser,
-  //     },
-  //     "CLIENT_SECRET_KEY",
-  //     { expiresIn: "60m" }
-  //   );
-
-  //   res.cookie("token", token, { httpOnly: true, secure: false }).json({
-  //     success: true,
-  //     message: "Logged in Successfully",
-  //     code:200,
-  //     user: {
-  //       email: checkUser.email,
-  //       // role: checkUser.role,
-  //       id: checkUser._id,
-  //     },
-  //   });
-  // } catch (e) {
-  //   console.log(e);
-  //   res.status(500).json({
-  //     success: false,
-  //     message: "Some error occurred",
-  //   });
-  // }
+    })
+   } else {
+    res.json({
+      code:400,
+      success:false,
+      message: "Invalid credentials"
+    })
+   }
+  
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({
+      success: false,
+      message: "Some error occurred",
+    });
+  }
 };
 
 //admin
-const adminLogin = async(req,res) => {
-
-}
+const adminLogin = async (req, res) => {};
 
 //auth middleware
 
-module.exports = { registerUser, loginUser ,adminLogin};
+module.exports = { registerUser, loginUser, adminLogin };
