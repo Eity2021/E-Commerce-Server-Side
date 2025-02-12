@@ -15,17 +15,26 @@ const storage = multer.diskStorage({
         cb(null, Date.now() + path.extname(file.originalname));
     },
 });
+const fileFilter = (req, file, cb) => {
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp","image/jpg"];
+    if (allowedTypes.includes(file.mimetype)) {
+        cb(null, true);
+    } else {
+        cb(new Error("Only image files are allowed!"), false);
+    }
+};
 
 // Define upload middleware
 const upload = multer({
     storage: storage,
-    limits: { fileSize: 5 * 1024 * 1024 }
-})
-// .fields([
-//     { name: "images1", maxCount: 1 },
-//     { name: "images2", maxCount: 1 },
-//     { name: "images3", maxCount: 1 },
-//     { name: "images4", maxCount: 1 },
-// ]);
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+    fileFilter: fileFilter,
+});
 
-module.exports = upload;
+// Export upload functions
+module.exports = {
+    singleUpload: upload.single("categories_image"), // For single image upload
+    multipleUpload: upload.array("image", 5), // For multiple images (max 5)
+};
+
+

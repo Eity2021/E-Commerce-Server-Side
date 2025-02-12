@@ -1,4 +1,4 @@
-const productModal = require("../../models/productModel");
+const productModel = require("../../models/productModel");
 
 const productList = async (req, res) => {
   try {
@@ -17,11 +17,11 @@ const addProduct = async (req, res) => {
     const { name, description, price, category, subcategory, sizes, popular } =
       req.body;
 
-    var arrImages = [];
+    var arrImages = req.files.map(file => file.filename);
 
-    for (let i = 0; i < req.files.length; i++) {
-      arrImages[i] = req.files[i].filename;
-    }
+    // for (let i = 0; i < req.files.length; i++) {
+    //   arrImages[i] = req.files[i].filename;
+    // }
 
     const productData = {
       name,
@@ -37,7 +37,7 @@ const addProduct = async (req, res) => {
 
     console.log(productData);
 
-    const product = productModal(productData);
+    const product = productModel(productData);
     await product.save();
 
     res.json({
