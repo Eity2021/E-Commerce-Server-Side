@@ -7,7 +7,7 @@ const { multipleUpload }  = require('../../middleware/multer')
 const productRouter = express.Router();
 
 productRouter.post("/add"  ,multipleUpload,addProduct);
-productRouter.post("/remove" , removeProduct);
+productRouter.delete("/remove/:id" , removeProduct);
 
 productRouter.get("/singleProduct/:id" , singleProduct);
 productRouter.get("/productsList" , productList);

@@ -15,6 +15,5 @@ const productSchema = new mongoose.Schema({
 function arrayLimit(val){
 return val.length <=5;
  }
-const productModal =
-  mongoose.models.product || mongoose.model("product", productSchema);
+const productModal =mongoose.models.product || mongoose.model("product", productSchema);
 module.exports = productModal;

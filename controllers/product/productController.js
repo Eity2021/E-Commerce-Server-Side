@@ -2,7 +2,7 @@ const productModel = require("../../models/productModel");
 
 const productList = async (req, res) => {
   try {
-    const products = await productModal.find({});
+    const products = await productModel.find({});
     res.json({ code: 200, success: true, products });
   } catch (error) {
     res.json({
@@ -17,12 +17,7 @@ const addProduct = async (req, res) => {
     const { name, description, price, category, subcategory, sizes, popular } =
       req.body;
 
-    var arrImages = req.files.map(file => file.filename);
-
-    // for (let i = 0; i < req.files.length; i++) {
-    //   arrImages[i] = req.files[i].filename;
-    // }
-
+    var arrImages = req.files.map((file) => file.filename);
     const productData = {
       name,
       description,
@@ -55,17 +50,16 @@ const addProduct = async (req, res) => {
   }
 };
 const singleProduct = async (req, res) => {
-  try{
-  const {id} = req.params;
+  try {
+    const { id } = req.params;
 
-  const product = await productModal.findById(id);
+    const product = await productModel.findById(id);
 
     res.json({
-      code:200, 
+      code: 200,
       success: true,
-      product
-    })
-
+      product,
+    });
   } catch (error) {
     res.json({
       code: 400,
@@ -77,8 +71,10 @@ const singleProduct = async (req, res) => {
 
 const removeProduct = async (req, res) => {
   try {
-    await productModal.findOneAndDelete(req.body.id);
-    res.json({code:200, success: true, message: "Product Removed" });
+    await productModel.findOneAndDelete(req.params.id);
+    res.json({ code: 200, 
+      success: true,
+       message: "removed product" });
   } catch (error) {
     res.json({
       code: 400,

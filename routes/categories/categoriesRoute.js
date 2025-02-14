@@ -1,14 +1,14 @@
 const express = require('express');
 const  {singleUpload} = require('../../middleware/multer');
-const { addCategories } = require('../../controllers/categories/categoriesController');
+const { addCategories,deleteCategory ,perCategoryId ,updateCategoryPerId ,categoryList} = require('../../controllers/categories/categoriesController');
 
 
 const categoriesRouter = express.Router();
 
 categoriesRouter.post("/addCategories"  ,singleUpload , addCategories);
-// categoriesRouter.post("/remove" , removeProduct);
-
-// categoriesRouter.get("/singleProduct/:id" , singleProduct);
-// categoriesRouter.get("/productsList" , productList);
+categoriesRouter.get("/categoriesList"  ,categoryList);
+categoriesRouter.delete("/delete/:id" ,deleteCategory );
+ categoriesRouter.get("/category/:id" , perCategoryId);
+categoriesRouter.put("/updateCategory/:id" , updateCategoryPerId);
  
 module.exports = categoriesRouter;
