@@ -1,5 +1,5 @@
 const productModel = require("../../models/productModel");
-
+const categoriesModel = require("../../models/categoriesModel");
 const productList = async (req, res) => {
   try {
     const products = await productModel.find({});
@@ -14,8 +14,20 @@ const productList = async (req, res) => {
 };
 const addProduct = async (req, res) => {
   try {
-    const { name, description, price, category, subcategory, sizes, popular } =
-      req.body;
+    const {
+      name,
+      description,
+      price,
+      sizes,
+      popular,
+      numberReview,
+      inFeatured,
+      rating,
+      countInStock,
+    } = req.body;
+    const category = await categoriesModel.findById(req.body.category);
+
+    if (!category) return res.status(404).send("Invalid category");
 
     var arrImages = req.files.map((file) => file.filename);
     const productData = {
@@ -23,7 +35,11 @@ const addProduct = async (req, res) => {
       description,
       price: Number(price),
       category,
-      subcategory,
+      // subcategory,
+      numberReview,
+      inFeatured,
+      rating,
+      countInStock,
       popular: popular == "true" ? true : false,
       sizes: sizes ? JSON.parse(sizes) : [],
       image: arrImages,
@@ -32,13 +48,14 @@ const addProduct = async (req, res) => {
 
     console.log(productData);
 
-    const product = productModel(productData);
-    await product.save();
+    const products = productModel(productData);
+    await products.save();
 
     res.json({
       code: 200,
       success: true,
       message: "Successfully! Added Product",
+      products
     });
   } catch (error) {
     console.log(error);
@@ -51,9 +68,8 @@ const addProduct = async (req, res) => {
 };
 const singleProduct = async (req, res) => {
   try {
-    const { id } = req.params;
 
-    const product = await productModel.findById(id);
+    const product = await productModel.findById(req.params.id).populate('category') ;
 
     res.json({
       code: 200,
@@ -72,9 +88,7 @@ const singleProduct = async (req, res) => {
 const removeProduct = async (req, res) => {
   try {
     await productModel.findOneAndDelete(req.params.id);
-    res.json({ code: 200, 
-      success: true,
-       message: "removed product" });
+    res.json({ code: 200, success: true, message: "removed product" });
   } catch (error) {
     res.json({
       code: 400,
