@@ -34,6 +34,7 @@ const upload = multer({
 // Export upload functions
 module.exports = {
     singleUpload: upload.single("categories_image"), // For single image upload
+    subSingleUpload: upload.single("subCategories_image"), // For single image upload
     multipleUpload: upload.array("image", 5), // For multiple images (max 5)
 };
 

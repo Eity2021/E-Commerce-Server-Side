@@ -6,6 +6,7 @@ const authRouter = require("./routes/auth/auth-routes");
 const dotenv = require("dotenv");
 const productRouter = require("./routes/product/productRoute");
 const categoriesRouter = require("./routes/categories/categoriesRoute");
+const subCategoriesRouter = require("./routes/subCategories/subCategoriesRoute");
 
 dotenv.config();
 mongoose
@@ -35,6 +36,7 @@ app.use(express.json());
 app.use("/api/auth", authRouter);
 app.use("/api/product", productRouter);
 app.use("/api/categories", categoriesRouter);
+app.use("/api/subCategories", subCategoriesRouter);
 
 app.get("/", (req, res) => {
   res.send("api working");
