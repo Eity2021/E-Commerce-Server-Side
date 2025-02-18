@@ -1,15 +1,13 @@
 const mongoose = require("mongoose");
 
 const subCategoriesSchema = new mongoose.Schema({
-
-    category_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "categories",
-        required: true,
-      },
-  subCategory_name: { 
-    type: Array, 
-    required: true 
+  category_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+  },
+  subCategory_name: {
+    type: String,
+    required: true,
   },
 
   subCategories_image: {
@@ -19,5 +17,6 @@ const subCategoriesSchema = new mongoose.Schema({
 });
 
 const subCategoriesModel =
-  mongoose.models.subCategories || mongoose.model("subCategories", subCategoriesSchema);
+  mongoose.models.subCategories ||
+  mongoose.model("subCategories", subCategoriesSchema);
 module.exports = subCategoriesModel;

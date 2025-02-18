@@ -1,4 +1,5 @@
 const categoriesModel = require("../../models/categoriesModel");
+const subCategoriesModel = require("../../models/subCategoriesModal");
 
 const addCategories = async (req, res) => {
   try {
@@ -37,8 +38,16 @@ const addCategories = async (req, res) => {
 };
 const categoryList = async(req,res) => {
     try{
+      const categories = await categoriesModel.find().lean();
 
-        const categoriesList = await categoriesModel.find({});
+
+        const categoriesList = await Promise.all(
+          categories.map(async (category) => {
+            const subCategories = await subCategoriesModel.find({ category_id: category._id })
+              .select("subCategory_name subCategories_image");
+            return { ...category, subCategories };
+          })
+        );
         res.json({
             code:200,
             success:true,
@@ -56,10 +65,22 @@ const categoryList = async(req,res) => {
 const perCategoryId = async (req,res) => {
     try{
    const perCategory= await categoriesModel.findById(req.params.id);
+   
+   if (!perCategory) {
+    return res.status(404).json({
+      code: 404,
+      success: false,
+      message: "Category not found",
+    });
+  }
+
+
+   const subCategories = await subCategoriesModel.find({ category_id: req.params.id });
     res.json({
         code:200,
         success:true,
-        perCategory
+        perCategory,
+        subCategories
     })
 
     } catch (error) {

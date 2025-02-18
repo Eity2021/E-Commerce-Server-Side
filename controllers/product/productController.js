@@ -25,17 +25,17 @@ const addProduct = async (req, res) => {
       rating,
       countInStock,
     } = req.body;
-    const category = await categoriesModel.findById(req.body.category);
 
+    const category = await categoriesModel.findById(req.body.category);
     if (!category) return res.status(404).send("Invalid category");
 
-    var arrImages = req.files.map((file) => file.filename);
+
+    var arrImages = req?.files?.map((file) => file?.filename);
     const productData = {
       name,
       description,
       price: Number(price),
       category,
-      // subcategory,
       numberReview,
       inFeatured,
       rating,
@@ -69,8 +69,17 @@ const addProduct = async (req, res) => {
 const singleProduct = async (req, res) => {
   try {
 
-    const product = await productModel.findById(req.params.id).populate('category') ;
+    const product = await productModel.findById(req.params.id).populate("category");
+  
+    if (!product) {
+      return res.json({
+        code: 404,
+        success: false,
+        message: "Product not found",
+      });
+    }
 
+    
     res.json({
       code: 200,
       success: true,
