@@ -1,4 +1,4 @@
-const subCategoriesModel = require("../../models/subCategoriesModal");
+const subCategoriesModel = require("../../models/subCategoriesModel");
 
 const addSubCategories = async (req, res) => {
   try {

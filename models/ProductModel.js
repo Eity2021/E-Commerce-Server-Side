@@ -15,11 +15,6 @@ const productSchema = new mongoose.Schema({
     ref: "categories",
     required: true,
   },
-  // subCategory: {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref:"subCategories",
-  //   required: true,
-  // },
 
   countInStock: {
     type: Number,

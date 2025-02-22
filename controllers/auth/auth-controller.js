@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const validator = require("validator");
-const userModal = require("../../models/userModel");
+const userModel = require("../../models/userModel");
 
 const createToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "7d" });
@@ -13,7 +13,7 @@ const registerUser = async (req, res) => {
 
   try {
     // Check if email already exists
-    const checkEmail = await userModal.findOne({ email });
+    const checkEmail = await userModel.findOne({ email });
     if (checkEmail) {
       return res.status(208).json({
         data: null,
@@ -42,7 +42,7 @@ const registerUser = async (req, res) => {
     const hashPassword = await bcrypt.hash(password, salt);
 
     // Save new user
-    const newUser = new userModal({
+    const newUser = new userModel({
       name: name,
       email: email,
       password: hashPassword,
@@ -79,7 +79,7 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
   try {
-    const checkUser = await userModal.findOne({ email });
+    const checkUser = await userModel.findOne({ email });
 
     if (!checkUser)
       return res.json({

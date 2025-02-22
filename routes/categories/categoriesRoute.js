@@ -10,5 +10,6 @@ categoriesRouter.get("/categoriesList"  ,categoryList);
 categoriesRouter.delete("/delete/:id" ,deleteCategory );
  categoriesRouter.get("/category/:id" , perCategoryId);
 categoriesRouter.put("/updateCategory/:id" , updateCategoryPerId);
+
  
 module.exports = categoriesRouter;
