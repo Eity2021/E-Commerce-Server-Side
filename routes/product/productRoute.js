@@ -16,6 +16,6 @@ productRouter.post("/add", multipleUpload, addProduct);
 productRouter.delete("/remove/:id", removeProduct);
 productRouter.get("/singleProduct/:id", singleProduct);
 productRouter.get("/productsList", productList);
-productRouter.put("/updateProduct/:id", updateProduct);
+productRouter.put("/updateProduct/:id", multipleUpload ,updateProduct);
 
 module.exports = productRouter;
