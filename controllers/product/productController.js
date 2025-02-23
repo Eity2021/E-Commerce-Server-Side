@@ -1,7 +1,8 @@
 const productModel = require("../../models/productModel");
 const categoriesModel = require("../../models/categoriesModel");
 const subCategoriesModel = require("../../models/subCategoriesModel");
-const productModal = require("../../models/productModel");
+
+
 const productList = async (req, res) => {
   try {
     const products = await productModel.find({});
@@ -13,7 +14,7 @@ const productList = async (req, res) => {
         success: false,
         message: "Product not found",
       });
-    } 
+    }
   } catch (error) {
     res.json({
       code: 500,
@@ -134,7 +135,10 @@ const singleProduct = async (req, res) => {
 const removeProduct = async (req, res) => {
   try {
     await productModel.findOneAndDelete(req.params.id);
-    res.json({ code: 200, success: true, message: "removed product" });
+    res.json({ 
+      code: 200, 
+      success: true, 
+      message: "removed product" });
   } catch (error) {
     res.json({
       code: 500,
@@ -144,8 +148,8 @@ const removeProduct = async (req, res) => {
   }
 };
 
-const updateProduct = async (req,res) => {
-  try{
+const updateProduct = async (req, res) => {
+  try {
     const {
       name,
       description,
@@ -158,12 +162,11 @@ const updateProduct = async (req,res) => {
       rating,
       countInStock,
     } = req.body;
+
+
+    
     const existingImages = req?.files?.map((file) => file?.filename || []);
-
-
     const existingProduct = await productModel.findById(req.params.id);
-    console.log("existingProduct", existingProduct);
-
 
     if (!existingProduct) {
       return res.status(404).json({
@@ -174,7 +177,7 @@ const updateProduct = async (req,res) => {
     }
 
     const productData = {
-      name : name,
+      name: name,
       description,
       price: Number(price),
       category,
@@ -188,36 +191,38 @@ const updateProduct = async (req,res) => {
       date: Date.now(),
     };
 
-  console.log("productData", productData);
+    const updateProductList = await productModel.findByIdAndUpdate(
+      req.params.id,
+      productData,
+      { new: true }
+    );
 
-const updateProductList = await productModel.findByIdAndUpdate(
-  req.params.id,
-  productData,
-  {new:true}
+    if (!updateProductList) {
+      return res.status(400).json({
+        code: 400,
+        success: false,
+        message: "Failed to update Product",
+      });
+    }
 
-);
-console.log("updateProductList", updateProductList);
-if (!updateProductList) {
-  return res.status(500).json({
-    code: 500,
-    success: false,
-    message: "Failed to update Product",
-  });
-}
-
-res.json({
-  code: 200,
-  success: true,
-  message: "Successfully! update Product",
-  data: updateProductList,
-});
-
-  }catch(error){
+    res.json({
+      code: 200,
+      success: true,
+      message: "Successfully! update Product",
+      data: updateProductList,
+    });
+  } catch (error) {
     res.json({
       code: 500,
       success: false,
       message: error.message,
     });
   }
-}
-module.exports = { productList, addProduct, singleProduct, removeProduct,updateProduct };
+};
+module.exports = {
+  productList,
+  addProduct,
+  singleProduct,
+  removeProduct,
+  updateProduct,
+};
