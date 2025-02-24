@@ -121,7 +121,43 @@ const loginUser = async (req, res) => {
 };
 
 //admin
-const adminLogin = async (req, res) => {};
+const adminLogin = async (req, res) => {
+
+  try {
+
+    const {email, password} = req.body;
+
+
+
+    if(email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASS){
+     const token = jwt.sign(email+password, process.env.JWT_SECRET)
+     res.status(201).json({
+      code :201,
+      success:true,
+      message:"Login Successfully ",
+      data:{
+        token
+      }
+     })
+    }else {
+     
+      res.status(400).json({
+        code:400,
+        success:false,
+        message:"Invalid Credentials"
+      })
+    }
+
+
+
+  }catch (e){
+    console.log(e);
+    res.status(500).json({
+      success: false,
+      message: "Some error occurred",
+    });
+  }
+};
 
 //auth middleware
 

@@ -45,7 +45,7 @@ const SubCategoriesList = async (req, res) => {
     });
   }
 };
-const deleteSubCategories = async (req, res ) => {
+const deleteSubCategories = async (req, res) => {
   try {
     const deleteSubCategory = await subCategoriesModel.findByIdAndDelete(
       req.params.id
@@ -72,47 +72,51 @@ const deleteSubCategories = async (req, res ) => {
     });
   }
 };
-const perSubCategories = async (req,res) => {};
-const updateSubCategories = async (req,res) => {
-  try{
 
+const updateSubCategories = async (req, res) => {
+  try {
     const { subCategory_name } = req.body;
 
     const subCategoriesImage = req?.file?.filename;
 
-    const existingSubcategory = await subCategoriesModel.findById(req.params.id);
+    const existingSubcategory = await subCategoriesModel.findById(
+      req.params.id
+    );
 
-    if(!existingSubcategory) {
+    if (!existingSubcategory) {
       return res.status(400).json({
-        code:400,
-        success:false,
-        message:"subcategory not found"
+        code: 400,
+        success: false,
+        message: "subcategory not found",
         // message:"Update subcategory successfully"
-      })
+      });
     }
 
     const subcategoryData = {
       subCategory_name,
-      subCategories_image:subCategoriesImage
+      subCategories_image: subCategoriesImage,
+    };
+
+    const updateSubcategory = await subCategoriesModel.findByIdAndUpdate(
+      req.params.id,
+      subcategoryData,
+      { new: true }
+    );
+
+    if (!updateSubcategory) {
+      return res.status(400).json({
+        code: 400,
+        success: false,
+        message: "Failed to update Product",
+      });
     }
 
-const updateSubcategory = await subCategoriesModel.findByIdAndUpdate(req.params.id ,subcategoryData ,{new:true});
-
-if (!updateSubcategory) {
-  return res.status(400).json({
-    code: 400,
-    success: false,
-    message: "Failed to update Product",
-  });
-}
-
-res.status(201).json({
-  code:201,
-  success:true,
-  message:"Successfully! update subcategory"
-})
-
-  }catch(error){
+    res.status(201).json({
+      code: 201,
+      success: true,
+      message: "Successfully! update subcategory",
+    });
+  } catch (error) {
     res.json({
       code: 500,
       success: false,
@@ -125,6 +129,5 @@ module.exports = {
   addSubCategories,
   SubCategoriesList,
   deleteSubCategories,
-  perSubCategories,
   updateSubCategories,
 };

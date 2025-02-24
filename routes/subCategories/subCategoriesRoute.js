@@ -4,7 +4,6 @@ const {
   addSubCategories,
   SubCategoriesList,
   deleteSubCategories,
-  perSubCategories,
   updateSubCategories,
 } = require("../../controllers/subCategories/subCategoriesController");
 
@@ -17,7 +16,7 @@ subCategoriesRouter.post(
 );
 subCategoriesRouter.get("/subCategoriesList", SubCategoriesList);
 subCategoriesRouter.delete("/subCategoryDelete/:id", deleteSubCategories);
-subCategoriesRouter.get("/subCategory/:id", perSubCategories);
+
 subCategoriesRouter.put(
   "/updateSubCategory/:id",
   subSingleUpload,
