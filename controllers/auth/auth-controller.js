@@ -9,11 +9,16 @@ const createToken = (id) => {
 
 // Register User
 const registerUser = async (req, res) => {
-  const { name, email, password } = req.body;
+
+  
+  const { name, email, password,role} = req.body;
 
   try {
     // Check if email already exists
     const checkEmail = await userModel.findOne({ email });
+
+
+
     if (checkEmail) {
       return res.status(208).json({
         data: null,
@@ -46,6 +51,7 @@ const registerUser = async (req, res) => {
       name: name,
       email: email,
       password: hashPassword,
+      role
     });
 
     const savedUser = await newUser.save();
@@ -59,6 +65,7 @@ const registerUser = async (req, res) => {
       data: {
         name: savedUser.name,
         email: savedUser.email,
+        role: savedUser.role,
         token,
       },
       success: true,
@@ -80,6 +87,7 @@ const loginUser = async (req, res) => {
   const { email, password } = req.body;
   try {
     const checkUser = await userModel.findOne({ email });
+
 
     if (!checkUser)
       return res.json({
@@ -124,34 +132,28 @@ const loginUser = async (req, res) => {
 const adminLogin = async (req, res) => {
 
   try {
+    const { email, password } = req.body;
 
-    const {email, password} = req.body;
-
-
-
-    if(email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASS){
-     const token = jwt.sign(email+password, process.env.JWT_SECRET)
-     res.status(201).json({
-      code :201,
-      success:true,
-      message:"Login Successfully ",
-      data:{
-        token
-      }
-     })
-    }else {
-     
+    if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASS) {
+      console.log('Generated token:', email === process.env.ADMIN_EMAIL);
+      const token = jwt.sign({ email , password}, process.env.JWT_SECRET);
+      res.status(201).json({
+        code: 201,
+        success: true,
+        message: "Login successful",
+        data: {
+          token
+        }
+      });
+    } else {
       res.status(400).json({
-        code:400,
-        success:false,
-        message:"Invalid Credentials"
-      })
+        code: 400,
+        success: false,
+        message: "Invalid Credentials"
+      });
     }
-
-
-
-  }catch (e){
-    console.log(e);
+  } catch (e) {
+    console.error(e);
     res.status(500).json({
       success: false,
       message: "Some error occurred",

@@ -5,7 +5,6 @@ const userSchema = new mongoose.Schema(
     name: {
       type: String,
       index: true,
-      required: true,
     },
     email: {
       type: String,
@@ -16,10 +15,16 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    role: {
+      type: String,
+      enum: ["admin", "seller", "customer"],
+      default: "customer",
+    },
     cartData: {
       type: Object,
       default: {},
     },
+
   },
   {
     timestamps: true,
