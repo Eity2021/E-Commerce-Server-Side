@@ -134,7 +134,7 @@ const adminLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASS) {
+    if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASS) {con
       console.log('Generated token:', email === process.env.ADMIN_EMAIL);
       const token = jwt.sign({ email , password}, process.env.JWT_SECRET);
       res.status(201).json({
