@@ -132,17 +132,23 @@ const loginUser = async (req, res) => {
 const adminLogin = async (req, res) => {
 
   try {
-    const { email, password } = req.body;
+    console.log("Request Body:", req.body);
 
+    const { email, password } = req.body;
+    console.log("Extracted Email:", email);
+    console.log("Extracted Password:", password);
+   console.log('email' , email)
     if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASS) {
+      
       console.log('Generated token:', email === process.env.ADMIN_EMAIL);
-      const token = jwt.sign({ email , password}, process.env.JWT_SECRET);
+      const token = jwt.sign(email + password, process.env.JWT_SECRET);
       res.status(201).json({
         code: 201,
         success: true,
         message: "Login successful",
         data: {
-          token
+          token,
+          role:"admin"
         }
       });
     } else {

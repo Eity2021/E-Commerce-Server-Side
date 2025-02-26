@@ -9,7 +9,7 @@ categoriesRouter.post("/addCategories"  ,singleUpload , addCategories);
 categoriesRouter.get("/categoriesList"  ,categoryList);
 categoriesRouter.delete("/delete/:id" ,deleteCategory );
  categoriesRouter.get("/category/:id" , perCategoryId);
-categoriesRouter.put("/updateCategory/:id" , updateCategoryPerId);
+categoriesRouter.put("/updateCategory/:id" ,singleUpload , updateCategoryPerId);
 
  
 module.exports = categoriesRouter;
