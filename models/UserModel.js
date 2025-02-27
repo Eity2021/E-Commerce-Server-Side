@@ -11,13 +11,25 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    
+    phone: {
+      type: String,
+      required: true,
+      validate: {
+        validator: function (v) {
+          return /^\d{10,15}$/.test(v); 
+        },
+        message: props => `${props.value} is not a valid phone number!`,
+      },
+    },
+
     password: {
       type: String,
       required: true,
     },
     role: {
       type: String,
-      enum: ["admin", "seller", "customer"],
+      enum: ["admin", "customer"],
       default: "customer",
     },
     cartData: {

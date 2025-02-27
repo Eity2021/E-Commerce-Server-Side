@@ -11,7 +11,7 @@ const createToken = (id) => {
 const registerUser = async (req, res) => {
 
   
-  const { name, email, password,role} = req.body;
+  const { name, email, password,phone,role} = req.body;
 
   try {
     // Check if email already exists
@@ -50,6 +50,7 @@ const registerUser = async (req, res) => {
     const newUser = new userModel({
       name: name,
       email: email,
+      phone:phone,
       password: hashPassword,
       role
     });
@@ -65,6 +66,7 @@ const registerUser = async (req, res) => {
       data: {
         name: savedUser.name,
         email: savedUser.email,
+        phone:savedUser.phone,
         role: savedUser.role,
         token,
       },
@@ -129,29 +131,84 @@ const loginUser = async (req, res) => {
 };
 
 //admin
+// const adminLogin = async (req, res) => {
+
+//   try {
+//     console.log("Request Body:", req.body);
+
+//     const { email, password } = req.body;
+//     console.log("Extracted Email:", email);
+//     console.log("Extracted Password:", password);
+//    console.log('email' , email)
+//     if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASS) {
+      
+//       console.log('Generated token:', email === process.env.ADMIN_EMAIL);
+//       const token = jwt.sign(email + password, process.env.JWT_SECRET);
+//       res.status(201).json({
+//         code: 201,
+//         success: true,
+//         message: "Login successful",
+//         data: {
+//           token,
+//           role:"admin"
+//         }
+//       });
+//     } else {
+//       res.status(400).json({
+//         code: 400,
+//         success: false,
+//         message: "Invalid Credentials"
+//       });
+//     }
+//   }catch (e) {
+//     console.error(e);
+//     res.status(500).json({
+//       success: false,
+//       message: "Some error occurred",
+//     });
+// }
+// };
+
 const adminLogin = async (req, res) => {
-
   try {
-    const { email, password } = req.body;
+    console.log("Request Body:", req.body);
 
-    if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASS) {con
-      console.log('Generated token:', email === process.env.ADMIN_EMAIL);
-      const token = jwt.sign({ email , password}, process.env.JWT_SECRET);
-      res.status(201).json({
-        code: 201,
-        success: true,
-        message: "Login successful",
-        data: {
-          token
-        }
-      });
-    } else {
-      res.status(400).json({
+    const { email, password } = req.body;
+    console.log("Extracted Email:", email);
+    console.log("Extracted Password:", password);
+
+    // Find admin in the database
+    const admin = await userModel.findOne({ email});
+
+    if (!admin) {
+      return res.status(400).json({
         code: 400,
         success: false,
-        message: "Invalid Credentials"
+        message: "Admin not found",
       });
     }
+
+    // Compare hashed password
+    const isMatch = await bcrypt.compare(password, admin.password);
+    if (!isMatch) {
+      return res.status(400).json({
+        code: 400,
+        success: false,
+        message: "Invalid Credentials",
+      });
+    }
+
+    // Generate JWT token
+    const token = jwt.sign({ id: admin._id, }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
+    res.status(201).json({
+      code: 201,
+      success: true,
+      message: "Admin Login successful",
+      data: {
+        token,
+      },
+    });
   } catch (e) {
     console.error(e);
     res.status(500).json({
@@ -161,6 +218,7 @@ const adminLogin = async (req, res) => {
   }
 };
 
+
 //auth middleware
 
-module.exports = { registerUser, loginUser, adminLogin };
+module.exports = { registerUser, loginUser, adminLogin }

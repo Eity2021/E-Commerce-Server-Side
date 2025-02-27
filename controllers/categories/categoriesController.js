@@ -18,6 +18,7 @@ const addCategories = async (req, res) => {
       code: 200,
       success: true,
       message: "Successfully! Added Category",
+      data:categories
     });
 
     if (!categories) {
@@ -32,6 +33,7 @@ const addCategories = async (req, res) => {
       code: 400,
       success: false,
       message: error.message,
+  
     });
   }
 };
