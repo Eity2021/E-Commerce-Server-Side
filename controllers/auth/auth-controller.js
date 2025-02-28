@@ -9,15 +9,11 @@ const createToken = (id) => {
 
 // Register User
 const registerUser = async (req, res) => {
-
-  
-  const { name, email, password,phone,role} = req.body;
+  const { name, email, password, phone, role } = req.body;
 
   try {
     // Check if email already exists
     const checkEmail = await userModel.findOne({ email });
-
-
 
     if (checkEmail) {
       return res.status(208).json({
@@ -50,9 +46,9 @@ const registerUser = async (req, res) => {
     const newUser = new userModel({
       name: name,
       email: email,
-      phone:phone,
+      phone: phone,
       password: hashPassword,
-      role
+      role,
     });
 
     const savedUser = await newUser.save();
@@ -66,7 +62,7 @@ const registerUser = async (req, res) => {
       data: {
         name: savedUser.name,
         email: savedUser.email,
-        phone:savedUser.phone,
+        phone: savedUser.phone,
         role: savedUser.role,
         token,
       },
@@ -90,7 +86,6 @@ const loginUser = async (req, res) => {
   try {
     const checkUser = await userModel.findOne({ email });
 
-
     if (!checkUser)
       return res.json({
         success: false,
@@ -102,83 +97,38 @@ const loginUser = async (req, res) => {
       checkUser.password
     );
 
-   if( checkPasswordMatch) {
-    const token = createToken(checkUser._id)
-    res.json({
-      code:200,
-      success:true,
-      message:"login Successfully",
-      data:{
-        token
-      }
-
-    })
-   } else {
-    res.json({
-      code:400,
-      success:false,
-      message: "Invalid credentials"
-    })
-   }
-  
+    if (checkPasswordMatch) {
+      const token = createToken(checkUser._id);
+      res.json({
+        code: 200,
+        success: true,
+        message: "login Successfully",
+        data: {
+          token,
+        },
+      });
+    } else {
+      res.json({
+        code: 400,
+        success: false,
+        message: "Invalid credentials",
+      });
+    }
   } catch (e) {
     console.log(e);
     res.status(500).json({
+      code: 500,
       success: false,
       message: "Some error occurred",
     });
   }
 };
-
-//admin
-// const adminLogin = async (req, res) => {
-
-//   try {
-//     console.log("Request Body:", req.body);
-
-//     const { email, password } = req.body;
-//     console.log("Extracted Email:", email);
-//     console.log("Extracted Password:", password);
-//    console.log('email' , email)
-//     if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASS) {
-      
-//       console.log('Generated token:', email === process.env.ADMIN_EMAIL);
-//       const token = jwt.sign(email + password, process.env.JWT_SECRET);
-//       res.status(201).json({
-//         code: 201,
-//         success: true,
-//         message: "Login successful",
-//         data: {
-//           token,
-//           role:"admin"
-//         }
-//       });
-//     } else {
-//       res.status(400).json({
-//         code: 400,
-//         success: false,
-//         message: "Invalid Credentials"
-//       });
-//     }
-//   }catch (e) {
-//     console.error(e);
-//     res.status(500).json({
-//       success: false,
-//       message: "Some error occurred",
-//     });
-// }
-// };
-
+// adminLogin
 const adminLogin = async (req, res) => {
   try {
-    console.log("Request Body:", req.body);
-
     const { email, password } = req.body;
-    console.log("Extracted Email:", email);
-    console.log("Extracted Password:", password);
 
-    // Find admin in the database
-    const admin = await userModel.findOne({ email});
+    const admin = await userModel.findOne({ email });
 
     if (!admin) {
       return res.status(400).json({
@@ -198,8 +148,7 @@ const adminLogin = async (req, res) => {
       });
     }
 
-    // Generate JWT token
-    const token = jwt.sign({ id: admin._id, }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const token = createToken(admin._id);
 
     res.status(201).json({
       code: 201,
@@ -218,7 +167,37 @@ const adminLogin = async (req, res) => {
   }
 };
 
+// userProfile
+const userProfile = async (req, res) => {
+  try {
+    if (!req.user || !req.user.id) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized, token missing or invalid" });
+    }
 
-//auth middleware
+    const user = await userModel.findById(req.user.id).select("-password");
 
-module.exports = { registerUser, loginUser, adminLogin }
+    if (!user) {
+      return res.status(404).json({
+        code: 404,
+        success: false,
+        message: "User not found",
+      });
+    }
+    res.status(201).json({
+      code: 201,
+      success: true,
+      message: "data Fetched",
+      data: {
+        user,
+      },
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ code: 500, success: false, message: "Server error" });
+  }
+};
+
+module.exports = { registerUser, loginUser, adminLogin, userProfile };
