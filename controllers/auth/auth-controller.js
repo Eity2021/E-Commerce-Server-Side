@@ -177,7 +177,7 @@ const userProfile = async (req, res) => {
     }
 
     const user = await userModel.findById(req.user.id).select("-password");
-
+console.log( "req.user.id",req.user.id)
     if (!user) {
       return res.status(404).json({
         code: 404,
@@ -194,10 +194,63 @@ const userProfile = async (req, res) => {
       },
     });
   } catch (error) {
-    res
-      .status(500)
-      .json({ code: 500, success: false, message: "Server error" });
+      res.status(500).json({
+      code: 500, 
+      success: false,
+      message: "Internal Server error" });
   }
 };
 
-module.exports = { registerUser, loginUser, adminLogin, userProfile };
+const profileUpdate = async(req,res) => {
+  
+  try{
+    const { name, email, password, phone } = req.body;
+    console.log("req.body",req.body)
+    
+    const  existingUser= await userModel.findById(req.user.id);
+    
+    console.log("existingUser", existingUser)
+    if(!existingUser){
+      return res.status(400).json({
+        code:400,
+        success:false,
+        message:"User Not found"
+      })
+    }
+
+const userData = {
+  name, email, password, phone
+}
+
+if (password) {
+  const salt = await bcrypt.genSalt(10);
+  userData.password = await bcrypt.hash(password, salt);
+}
+
+const updateUserProfile = await userModel.findByIdAndUpdate(
+      req.user.id,  { $set: userData },  {new:true}
+      
+    );
+if(!updateUserProfile) {
+  return res.status(404).json({
+    code:404,
+    success:false,
+    message:"Failed to update user"
+  })
+}
+
+res.status(201).json({
+  code:201,
+  success:true,
+  message:"User Successfully! update ",
+  data:updateUserProfile
+})
+  }catch(error){
+
+    res.status(500).json({
+      code: 500, 
+      success: false,
+      message: "Internal Server error" });
+  }
+}
+module.exports = { registerUser, loginUser, adminLogin, userProfile,profileUpdate };

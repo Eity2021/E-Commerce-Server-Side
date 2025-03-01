@@ -135,8 +135,8 @@ const updateCategoryPerId = async (req, res) => {
       });
     }
 
-    res.json({
-      code: 200,
+    res.status(201).json({
+      code: 201,
       success: true,
       message: "Successfully! update Category",
       data: updateCategory,
