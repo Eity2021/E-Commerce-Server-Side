@@ -85,7 +85,7 @@ const loginUser = async (req, res) => {
   const { email, password } = req.body;
   try {
     const checkUser = await userModel.findOne({ email });
-
+console.log("checkUser",checkUser )
     if (!checkUser)
       return res.json({
         success: false,
@@ -124,48 +124,6 @@ const loginUser = async (req, res) => {
   }
 };
 // adminLogin
-const adminLogin = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    const admin = await userModel.findOne({ email });
-
-    if (!admin) {
-      return res.status(400).json({
-        code: 400,
-        success: false,
-        message: "Admin not found",
-      });
-    }
-
-    // Compare hashed password
-    const isMatch = await bcrypt.compare(password, admin.password);
-    if (!isMatch) {
-      return res.status(400).json({
-        code: 400,
-        success: false,
-        message: "Invalid Credentials",
-      });
-    }
-
-    const token = createToken(admin._id);
-
-    res.status(201).json({
-      code: 201,
-      success: true,
-      message: "Admin Login successful",
-      data: {
-        token,
-      },
-    });
-  } catch (e) {
-    console.error(e);
-    res.status(500).json({
-      success: false,
-      message: "Some error occurred",
-    });
-  }
-};
 
 // userProfile
 const userProfile = async (req, res) => {
@@ -253,4 +211,4 @@ res.status(201).json({
       message: "Internal Server error" });
   }
 }
-module.exports = { registerUser, loginUser, adminLogin, userProfile,profileUpdate };
+module.exports = { registerUser, loginUser, userProfile,profileUpdate };

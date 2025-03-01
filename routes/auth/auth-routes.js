@@ -1,5 +1,5 @@
 const express = require('express');
-const { registerUser ,loginUser, adminLogin, userProfile, profileUpdate} = require('../../controllers/auth/auth-controller');
+const { registerUser ,loginUser, userProfile, profileUpdate} = require('../../controllers/auth/auth-controller');
 const authMiddleware = require('../../middleware/authMiddleware');
 
 const router = express.Router();
@@ -8,6 +8,6 @@ router.post("/register" , registerUser);
 router.get("/profile"  , authMiddleware, userProfile);
 router.post("/profileUpdate"  , authMiddleware, profileUpdate);
 router.post("/login" , loginUser);
-router.post("/admin" , adminLogin);
+
 
 module.exports = router;
