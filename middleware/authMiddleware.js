@@ -1,18 +1,25 @@
 const jwt = require("jsonwebtoken");
 
 const authMiddleware = (req, res, next) => {
-    const token = req.header("Authorization"); // Ensure the token is sent
+    
+    const token = req.header("Authorization"); 
 
     if (!token) {
-        return res.status(401).json({ message: "No token, authorization denied" });
+        return res.status(401).json({ 
+            code:401,
+            success:false,
+            message: "No token, authorization denied" });
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET); // Verify token
-        req.user = decoded; // Attach user to request
+        const decoded = jwt.verify(token, process.env.JWT_SECRET); 
+        req.user = decoded; 
         next();
     } catch (error) {
-        res.status(401).json({ message: "Invalid token" });
+        res.status(500).json({      
+               code:500,
+            success:false,
+            message: "Invalid token" });
     }
 };
 

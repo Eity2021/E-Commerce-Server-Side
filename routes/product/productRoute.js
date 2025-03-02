@@ -9,13 +9,14 @@ const {
 // const  upload = require('../../middleware/multer');
 
 const { multipleUpload } = require("../../middleware/multer");
+const adminAuthMiddleware = require("../../middleware/adminAuthMiddleware");
 
 const productRouter = express.Router();
 
-productRouter.post("/add", multipleUpload, addProduct);
-productRouter.delete("/remove/:id", removeProduct);
+productRouter.post("/add", adminAuthMiddleware,multipleUpload, addProduct);
+productRouter.delete("/remove/:id",adminAuthMiddleware, removeProduct);
 productRouter.get("/singleProduct/:id", singleProduct);
 productRouter.get("/productsList", productList);
-productRouter.put("/updateProduct/:id", multipleUpload ,updateProduct);
+productRouter.put("/updateProduct/:id", adminAuthMiddleware ,multipleUpload ,updateProduct);
 
 module.exports = productRouter;

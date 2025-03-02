@@ -6,19 +6,21 @@ const {
   deleteSubCategories,
   updateSubCategories,
 } = require("../../controllers/subCategories/subCategoriesController");
+const adminAuthMiddleware = require("../../middleware/adminAuthMiddleware");
 
 const subCategoriesRouter = express.Router();
 
 subCategoriesRouter.post(
   "/addSubCategories",
+  adminAuthMiddleware,
   subSingleUpload,
   addSubCategories
 );
 subCategoriesRouter.get("/subCategoriesList", SubCategoriesList);
-subCategoriesRouter.delete("/subCategoryDelete/:id", deleteSubCategories);
-
+subCategoriesRouter.delete("/subCategoryDelete/:id", adminAuthMiddleware,deleteSubCategories);
 subCategoriesRouter.put(
   "/updateSubCategory/:id",
+  adminAuthMiddleware,
   subSingleUpload,
   updateSubCategories
 );

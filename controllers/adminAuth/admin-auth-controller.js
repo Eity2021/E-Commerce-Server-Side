@@ -1,20 +1,17 @@
 const bcrypt = require("bcrypt");
 const adminModel = require("../../models/adminModel");
-const userModal = require("../../models/userModel");
 const jwt = require("jsonwebtoken");
 
 
 const createToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+  return jwt.sign({ id }, process.env.JWT_SECRET_ADMIN, { expiresIn: "7d" });
 };
 
 const adminLogin = async (req, res) => {
   const { email, password } = req.body;
-  console.log('email',req.body);
+
     try {
-  
       const adminData = await adminModel.findOne({ email });
-     console.log('email',adminData);
       if (!adminData) {
         return res.status(400).json({
           code: 400,
@@ -52,5 +49,62 @@ const adminLogin = async (req, res) => {
     }
   };
   
+  
+  const adminUpdate = async (req,res) => {
+    try{
+      const {name,phone,email,password} = req.body;
+      console.log(" req.body" , req.body)
 
-  module.exports = {adminLogin};
+const existingAdmin = await adminModel.findById(req.admin.id)
+ 
+  console.log( "existingAdmin",existingAdmin );
+
+  if(!existingAdmin){
+    res.status(400).json({
+      code:400,
+      success:false,
+      message:"admin not found"
+    })
+  }
+
+  const adminData = {
+    name, email, password, phone
+  }
+
+if (password) {
+  const salt = await bcrypt.genSalt(10);
+  adminData.password = await bcrypt.hash(password, salt);
+}
+
+const updateAdminProfile = await adminModel.findByIdAndUpdate(
+   req.admin.id, 
+  {$set: adminData}, 
+  {new:true}
+  
+);
+if(!updateAdminProfile) {
+return res.status(404).json({
+code:404,
+success:false,
+message:"Failed to update user"
+})
+}
+
+res.status(201).json({
+code:201,
+success:true,
+message:"Admin Successfully! update ",
+data:updateAdminProfile
+})
+
+
+}catch (error) {
+  res.status(500).json({
+    code: 500, 
+    success: false,
+    message: "Internal Server error" 
+  });
+  
+}   
+  }
+  module.exports = {adminLogin , adminUpdate};

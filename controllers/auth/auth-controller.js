@@ -123,7 +123,6 @@ console.log("checkUser",checkUser )
     });
   }
 };
-// adminLogin
 
 // userProfile
 const userProfile = async (req, res) => {
