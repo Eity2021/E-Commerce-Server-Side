@@ -3,7 +3,6 @@ const jwt = require("jsonwebtoken");
 const adminAuthMiddleware = (req,res,next) => {
     
     const adminToken = req.header("Authorization");
-  console.log("adminToken", adminToken )
     if(!adminToken){
         return res.status(401).json({
             code:401,

@@ -53,11 +53,11 @@ const adminLogin = async (req, res) => {
   const adminUpdate = async (req,res) => {
     try{
       const {name,phone,email,password} = req.body;
-      console.log(" req.body" , req.body)
+
 
 const existingAdmin = await adminModel.findById(req.admin.id)
  
-  console.log( "existingAdmin",existingAdmin );
+
 
   if(!existingAdmin){
     res.status(400).json({

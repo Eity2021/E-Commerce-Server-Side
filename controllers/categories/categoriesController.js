@@ -12,13 +12,13 @@ const addCategories = async (req, res) => {
       color,
       categories_image: categoriesImage,
     };
-    const categories = categoriesModel(categoriesData);
+    const categories = await categoriesModel(categoriesData);
     await categories.save();
-    res.json({
-      code: 200,
+    res.status(201).json({
+      code: 201,
       success: true,
       message: "Successfully! Added Category",
-      data:categories
+      data: categories,
     });
 
     if (!categories) {
@@ -29,11 +29,10 @@ const addCategories = async (req, res) => {
       });
     }
   } catch (error) {
-    res.json({
-      code: 400,
+    res.status(500).json({
+      code: 500,
       success: false,
       message: error.message,
-  
     });
   }
 };
@@ -55,8 +54,8 @@ const categoryList = async (req, res) => {
       categoriesList,
     });
   } catch (error) {
-    res.json({
-      code: 400,
+    res.status(500).json({
+      code: 500,
       success: false,
       message: error.message,
     });
@@ -77,21 +76,18 @@ const perCategoryId = async (req, res) => {
       .find({ category_id: perCategory._id })
       .select("subCategory_name subCategories_image");
 
-    // const subCategories = await subCategoriesModel.find({
-    //   category_id: req.params.id,
-    // });
     res.json({
       code: 200,
       success: true,
       perCategory: {
         _id: perCategory._id,
-        category_name: perCategory.category_name, // Add other necessary fields
+        category_name: perCategory.category_name,
         subCategories,
       },
     });
   } catch (error) {
-    res.json({
-      code: 400,
+    res.status(500).json({
+      code: 500,
       success: false,
       message: error.message,
     });
@@ -113,8 +109,6 @@ const updateCategoryPerId = async (req, res) => {
       });
     }
 
-
-    
     const categoriesData = {
       category_name,
       color,
@@ -142,8 +136,8 @@ const updateCategoryPerId = async (req, res) => {
       data: updateCategory,
     });
   } catch (error) {
-    res.json({
-      code: 400,
+    res.status(500).json({
+      code: 500,
       success: false,
       message: error.message,
     });
@@ -158,8 +152,8 @@ const deleteCategory = async (req, res) => {
       message: "category delete successfully!",
     });
   } catch (error) {
-    res.json({
-      code: 400,
+    res.status(500).json({
+      code: 500,
       success: false,
       message: error.message,
     });

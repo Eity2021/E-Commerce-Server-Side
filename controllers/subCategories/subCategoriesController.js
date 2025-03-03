@@ -10,7 +10,6 @@ const addSubCategories = async (req, res) => {
       subCategory_name,
       subCategories_image: subCategoriesImage,
     };
-    console.log("subCategoriesData", subCategoriesData);
     const subcategories = subCategoriesModel(subCategoriesData);
     await subcategories.save();
     res.json({

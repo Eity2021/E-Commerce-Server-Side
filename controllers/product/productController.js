@@ -38,7 +38,7 @@ const addProduct = async (req, res) => {
     } = req.body;
 
     const category = await categoriesModel.findById(req.body.category);
-    // console.log(category);
+
     if (!category) {
       return res.status(404).json({
         code: 404,
@@ -73,7 +73,7 @@ const addProduct = async (req, res) => {
       date: Date.now(),
     };
 
-    console.log(productData);
+
 
     const products = productModel(productData);
     await products.save();
@@ -85,7 +85,7 @@ const addProduct = async (req, res) => {
       products,
     });
   } catch (error) {
-    console.log(error);
+   
     res.json({
       code: 500,
       success: false,

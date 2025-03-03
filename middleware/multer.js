@@ -11,7 +11,6 @@ const storage = multer.diskStorage({
         } ); // Ensure this folder exists
     },
     filename: function (req, file, cb) {
-        console.log(cb)
         cb(null, Date.now() + path.extname(file.originalname));
     },
 });
@@ -27,12 +26,13 @@ const fileFilter = (req, file, cb) => {
 // Define upload middleware
 const upload = multer({
     storage: storage,
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+    limits: { fileSize: 5 * 1024 * 1024 },
     fileFilter: fileFilter,
 });
 
 // Export upload functions
 module.exports = {
+    singleUserUpload: upload.single("user_image"),
     singleUpload: upload.single("categories_image"),
     subSingleUpload: upload.single("subCategories_image"), 
     multipleUpload: upload.array("image", 5), 

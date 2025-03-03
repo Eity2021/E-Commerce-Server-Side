@@ -11,6 +11,7 @@ const createToken = (id) => {
 const registerUser = async (req, res) => {
   const { name, email, password, phone, role } = req.body;
 
+  const userImage = req?.file?.filename || "";
   try {
     // Check if email already exists
     const checkEmail = await userModel.findOne({ email });
@@ -47,6 +48,7 @@ const registerUser = async (req, res) => {
       name: name,
       email: email,
       phone: phone,
+      user_image:userImage,
       password: hashPassword,
       role,
     });
@@ -60,10 +62,6 @@ const registerUser = async (req, res) => {
     res.status(201).json({
       code: 201,
       data: {
-        name: savedUser.name,
-        email: savedUser.email,
-        phone: savedUser.phone,
-        role: savedUser.role,
         token,
       },
       success: true,
@@ -85,7 +83,6 @@ const loginUser = async (req, res) => {
   const { email, password } = req.body;
   try {
     const checkUser = await userModel.findOne({ email });
-console.log("checkUser",checkUser )
     if (!checkUser)
       return res.json({
         success: false,
@@ -115,7 +112,6 @@ console.log("checkUser",checkUser )
       });
     }
   } catch (e) {
-    console.log(e);
     res.status(500).json({
       code: 500,
       success: false,
@@ -134,7 +130,7 @@ const userProfile = async (req, res) => {
     }
 
     const user = await userModel.findById(req.user.id).select("-password");
-console.log( "req.user.id",req.user.id)
+
     if (!user) {
       return res.status(404).json({
         code: 404,
@@ -162,11 +158,10 @@ const profileUpdate = async(req,res) => {
   
   try{
     const { name, email, password, phone } = req.body;
-    console.log("req.body",req.body)
-    
+    const userImage = req?.file?.filename || "";
     const  existingUser= await userModel.findById(req.user.id);
     
-    console.log("existingUser", existingUser)
+
     if(!existingUser){
       return res.status(400).json({
         code:400,
@@ -176,7 +171,7 @@ const profileUpdate = async(req,res) => {
     }
 
 const userData = {
-  name, email, password, phone
+  name, email, password, phone,user_image:userImage
 }
 
 if (password) {
@@ -187,7 +182,7 @@ if (password) {
 const updateUserProfile = await userModel.findByIdAndUpdate(
       req.user.id,  { $set: userData },  {new:true}
       
-    );
+    ).select("-password");
 if(!updateUserProfile) {
   return res.status(404).json({
     code:404,
