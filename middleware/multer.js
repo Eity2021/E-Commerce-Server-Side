@@ -36,6 +36,7 @@ module.exports = {
     singleUpload: upload.single("categories_image"),
     subSingleUpload: upload.single("subCategories_image"), 
     multipleUpload: upload.array("image", 5), 
+    multipleMainBannerUpload: upload.array("mainBanner", 15), 
 };
 
 

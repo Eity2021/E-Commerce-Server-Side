@@ -5,15 +5,21 @@ const subCategoriesModel = require("../../models/subCategoriesModel");
 const productList = async (req, res) => {
   try {
     const products = await productModel.find({});
-    res.json({ code: 200, success: true, products });
-
     if (!products) {
       res.status(404).json({
         code: 404,
         success: false,
         message: "Product not found",
       });
-    }
+    
+    res.status(200).json({ 
+      code: 200, 
+      success: true,
+      message:"product List fetched",
+       products 
+      });
+
+ }
   } catch (error) {
     res.json({
       code: 500,
@@ -297,7 +303,6 @@ const getFilteredProducts = async (req, res) => {
     res.status(500).json({ message: "Error fetching products" });
   }
 };
-
 const getRelatedProducts = async (req, res) => {
   try {
     const { productId } = req.params;
@@ -329,7 +334,6 @@ const getRelatedProducts = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 const getRecommendedProduct = async (req, res) => {
   try {
     const { productId } = req.params;
