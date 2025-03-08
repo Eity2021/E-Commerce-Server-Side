@@ -29,8 +29,11 @@ const productSchema = new mongoose.Schema({
   inFeatured: {
     type: Boolean,
     default: false,
-    required: true,
   },
+  bestSelling: { type: Boolean, default: false },
+  onSale: { type: Boolean, default: false },
+  newProduct: { type: Boolean, default: false },
+
   numberReview: {
     type: Number,
     default: 0,
@@ -38,11 +41,14 @@ const productSchema = new mongoose.Schema({
   sizes: { type: Array, required: true },
   popular: { type: Boolean },
   date: { type: Date, required: true },
-});
+  tags: [{ type: String }],
+  views: { type: Number, default: 0 },
+  viewedBy: [String],
+}, { timestamps: true });
 
 function arrayLimit(val) {
   return val.length <= 5;
 }
-const productModal =
+const productModel =
   mongoose.models.product || mongoose.model("product", productSchema);
-module.exports = productModal;
+module.exports = productModel;

@@ -8,6 +8,7 @@ const productRouter = require("./routes/product/productRoute");
 const categoriesRouter = require("./routes/categories/categoriesRoute");
 const subCategoriesRouter = require("./routes/subCategories/subCategoriesRoute");
 const adminRouter = require("./routes/auth/admin-auth-routes");
+const cartRouter = require("./routes/cart/cartRoutes");
 
 dotenv.config();
 mongoose
@@ -41,6 +42,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/product", productRouter);
 app.use("/api/categories", categoriesRouter);
 app.use("/api/subCategories", subCategoriesRouter);
+app.use("/api/productCart", cartRouter);
 
 app.get("/", (req, res) => {
   res.send("api working");
