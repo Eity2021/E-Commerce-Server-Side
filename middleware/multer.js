@@ -33,10 +33,12 @@ const upload = multer({
 // Export upload functions
 module.exports = {
     singleUserUpload: upload.single("user_image"),
+    singleAdminUpload: upload.single("admin_image"),
     singleUpload: upload.single("categories_image"),
     subSingleUpload: upload.single("subCategories_image"), 
     multipleUpload: upload.array("image", 5), 
     multipleMainBannerUpload: upload.array("mainBanner", 15), 
+    multipleMiddleBannerUpload: upload.array("middleBanner", 15), 
 };
 
 

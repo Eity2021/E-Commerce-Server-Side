@@ -11,7 +11,11 @@ const adminSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    
+    admin_image: {
+      type: String,
+      // required: true,
+    },
+
     phone: {
       type: String,
       required: true,

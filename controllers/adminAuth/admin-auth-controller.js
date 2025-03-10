@@ -9,7 +9,6 @@ const createToken = (id) => {
 
 const adminLogin = async (req, res) => {
   const { email, password } = req.body;
-
     try {
       const adminData = await adminModel.findOne({ email });
       if (!adminData) {
@@ -53,7 +52,7 @@ const adminLogin = async (req, res) => {
   const adminUpdate = async (req,res) => {
     try{
       const {name,phone,email,password} = req.body;
-
+      const adminImage = req?.file?.filename || "";
 
 const existingAdmin = await adminModel.findById(req.admin.id)
  
@@ -68,7 +67,7 @@ const existingAdmin = await adminModel.findById(req.admin.id)
   }
 
   const adminData = {
-    name, email, password, phone
+    name, email, password, phone,admin_image:adminImage,
   }
 
 if (password) {

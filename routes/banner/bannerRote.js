@@ -2,11 +2,16 @@ const express = require("express");
 const {
   mainBanners,
   mainBannerLists,
-  deleteBanner,
   deleteMainBannerImage,
 } = require("../../controllers/mainBanner/mainBannerController");
-const { multipleMainBannerUpload } = require("../../middleware/multer");
+const {
+  multipleMainBannerUpload,
+  multipleMiddleBannerUpload,
+} = require("../../middleware/multer");
 const adminAuthMiddleware = require("../../middleware/adminAuthMiddleware");
+const {
+  addMiddleBanner,
+} = require("../../controllers/middleBanner/middleBannerController");
 
 const bannerRouter = express.Router();
 
@@ -22,9 +27,13 @@ bannerRouter.delete(
   deleteMainBannerImage
 );
 
-bannerRouter.get(
-  "/mainBannerLists",
-  mainBannerLists
+bannerRouter.get("/mainBannerLists", mainBannerLists);
+
+bannerRouter.post(
+  "/middleBanner",
+  adminAuthMiddleware,
+  multipleMiddleBannerUpload,
+  addMiddleBanner
 );
 
 module.exports = bannerRouter;
