@@ -126,7 +126,8 @@ const userProfile = async (req, res) => {
     if (!req.user || !req.user.id) {
       return res
         .status(401)
-        .json({ message: "Unauthorized, token missing or invalid" });
+        .json({ code:401,success:false,
+          message: "Unauthorized, token missing or invalid" });
     }
 
     const user = await userModel.findById(req.user.id).select("-password");
