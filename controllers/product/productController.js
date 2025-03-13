@@ -158,7 +158,7 @@ const removeProduct = async (req, res) => {
     res.json({
       code: 200,
       success: true,
-      message: "removed product",
+      message: "successfully removed product",
     });
   } catch (error) {
     res.json({

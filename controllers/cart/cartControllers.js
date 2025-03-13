@@ -69,26 +69,66 @@ const addToCart = async (req, res) => {
 };
 const cartList = async (req, res) => {
   try {
-  
     const userId = req.user.id;
 
-   const cartItems = await cartModel.findOne({ user : userId});
+    const cartItems = await cartModel
+      .findOne({ user: userId })
+      .populate("products.product");
 
-   res.status(200) .json({ 
-        code: 200, 
-        success: true, 
-        message: "cart Items fetched",
-        data:cartItems
-       });
-
-
+    res.status(200).json({
+      code: 200,
+      success: true,
+      message: "cart Items fetched",
+      data: cartItems,
+    });
   } catch (error) {
-    res
-      .status(500) .json({ 
-        code: 500, 
-        success: false, 
-        message: "Internal Server Error" });
+    res.status(500).json({
+      code: 500,
+      success: false,
+      message: "Internal Server Error",
+    });
   }
 };
 
-module.exports = { addToCart, cartList };
+const cartDelete = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const productId = req.params.productId;
+    const cartInfo = await cartModel.findOne({ user: userId });
+
+    if (!cartInfo) {
+      res.status(400).json({
+        code: 400,
+        success: true,
+        message: "cart not found",
+      });
+    }
+
+    const productInCart = cartInfo.products.find((item) =>
+      item.product.equals(productId)
+    );
+
+    const priceToRemove = productInCart.price;
+
+    await cartModel.findOneAndUpdate(
+      { user: userId },
+      {
+        $pull: { products: { product: productId } },
+        $inc: { totalAmount: -priceToRemove },
+      }
+    );
+    res.status(200).json({
+      code: 200,
+      success: true,
+      message: "successfully removed cart  ",
+    });
+  } catch (error) {
+    res.status(500).json({
+      code: 500,
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+};
+
+module.exports = { addToCart, cartList, cartDelete };
