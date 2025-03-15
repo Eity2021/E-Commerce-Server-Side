@@ -46,7 +46,12 @@ const skip = (offset - 1 ) +limit
         success:false,
         message:"order List fetched",
         data:{
-            userOrderList
+            userOrderList,
+            pagination:{
+                limit,
+                offset,
+                total
+            }
         }
     })
 
