@@ -115,7 +115,8 @@ const cartDelete = async (req, res) => {
       {
         $pull: { products: { product: productId } },
         $inc: { totalAmount: -priceToRemove },
-      }
+      },
+      { new: true } 
     );
     res.status(200).json({
       code: 200,

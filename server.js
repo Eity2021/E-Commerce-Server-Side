@@ -12,6 +12,8 @@ const cartRouter = require("./routes/cart/cartRoute");
 const bannerRouter = require("./routes/banner/bannerRote");
 const middleBannerRouter = require("./routes/banner/middleBannerRoute");
 const wishListRouter = require("./routes/wishList/wishListRoute");
+const checkoutRouter = require("./routes/checkOut/checkOutRoute");
+const orderRouter = require("./routes/order/orderRoute");
 
 dotenv.config();
 mongoose
@@ -49,6 +51,8 @@ app.use("/api/productCart", cartRouter);
 app.use("/api/banner", bannerRouter);
 app.use("/api/middle", middleBannerRouter);
 app.use("/api/wish", wishListRouter);
+app.use("/api/checkedOut", checkoutRouter);
+app.use("/api/order", orderRouter);
 
 app.get("/", (req, res) => {
   res.send("api working");
