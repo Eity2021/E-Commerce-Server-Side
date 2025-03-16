@@ -7,17 +7,23 @@ const addToCart = async (req, res) => {
     const userId = req.user.id;
 
     if (!productId) {
-      return res.status(400).json({ message: "Invalid product ID" });
+      return res
+        .status(400)
+        .json({ code: 400, success: false, message: "Invalid product ID" });
     }
 
     const productInfo = await productModel.findById(productId);
 
     if (!productInfo) {
-      return res.status(404).json({ message: "Product not found" });
+      return res
+        .status(404)
+        .json({ code: 404, success: false, message: "Product not found" });
     }
 
     if (!userId) {
-      return res.status(200).json({ message: "Not found user" });
+      return res
+        .status(404)
+        .json({ code: 404, success: false, message: "user not found",});
     }
 
     const pricePerQuantity = productInfo.price;
@@ -116,7 +122,7 @@ const cartDelete = async (req, res) => {
         $pull: { products: { product: productId } },
         $inc: { totalAmount: -priceToRemove },
       },
-      { new: true } 
+      { new: true }
     );
     res.status(200).json({
       code: 200,
