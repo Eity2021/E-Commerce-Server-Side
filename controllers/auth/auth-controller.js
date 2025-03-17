@@ -122,13 +122,11 @@ const loginUser = async (req, res) => {
 const userProfile = async (req, res) => {
   try {
     if (!req.user || !req.user.id) {
-      return res
-        .status(401)
-        .json({
-          code: 401,
-          success: false,
-          message: "Unauthorized, token missing or invalid",
-        });
+      return res.status(401).json({
+        code: 401,
+        success: false,
+        message: "Unauthorized, token missing or invalid",
+      });
     }
 
     const user = await userModel.findById(req.user.id).select("-password");
@@ -192,8 +190,7 @@ const profileUpdate = async (req, res) => {
       phone,
       user_image: userImage,
     };
-    console.log("Updating user with ID:", userId);
-    console.log("userData", userData);
+
     // if (password) {
     //   const salt = await bcrypt.genSalt(10);
     //   userData.password = await bcrypt.hash(password, salt);
@@ -228,4 +225,47 @@ const profileUpdate = async (req, res) => {
     });
   }
 };
-module.exports = { registerUser, loginUser, userProfile, profileUpdate };
+// changedPassword
+const changedPassword = async (req, res) => {
+  try {
+    const userId = req?.user?.id;
+    const { oldPassword, newPassword } = req.body;
+
+    const user = await userModel.findById(userId);
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ code: 404, success: false, message: "User not found" });
+    }
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Old password is incorrect" });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    user.password = hashedPassword;
+    await user.save();
+
+    res.status(201).json({
+      code: 201,
+      success: true,
+      message: "Password changed successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      code: 500,
+      success: false,
+      message: "Internal Server error",
+    });
+  }
+};
+module.exports = {
+  registerUser,
+  loginUser,
+  userProfile,
+  profileUpdate,
+  changedPassword,
+};
