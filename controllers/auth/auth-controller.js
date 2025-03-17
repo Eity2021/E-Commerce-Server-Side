@@ -6,7 +6,6 @@ const userModel = require("../../models/userModel");
 const createToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 };
-
 // Register User
 const registerUser = async (req, res) => {
   const { name, email, password, phone, role } = req.body;
@@ -76,7 +75,6 @@ const registerUser = async (req, res) => {
     });
   }
 };
-
 //login
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
@@ -262,6 +260,8 @@ const changedPassword = async (req, res) => {
     });
   }
 };
+// logout
+// const logout = async (req,res) => // }
 module.exports = {
   registerUser,
   loginUser,

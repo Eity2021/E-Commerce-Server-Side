@@ -12,7 +12,7 @@ const userSchema = new mongoose.Schema(
       unique: true,
     },
 
-  user_image: {
+    user_image: {
       type: String,
       // required: true,
     },
@@ -22,9 +22,9 @@ const userSchema = new mongoose.Schema(
       required: true,
       validate: {
         validator: function (v) {
-          return /^\d{10,15}$/.test(v); 
+          return /^\d{10,15}$/.test(v);
         },
-        message: props => `${props.value} is not a valid phone number!`,
+        message: (props) => `${props.value} is not a valid phone number!`,
       },
     },
 
@@ -41,7 +41,6 @@ const userSchema = new mongoose.Schema(
       type: Object,
       default: {},
     },
-
   },
   {
     timestamps: true,
