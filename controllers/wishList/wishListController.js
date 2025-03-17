@@ -105,4 +105,43 @@ const wishLists = async (req, res) => {
   }
 };
 
-module.exports = { addToWishList, wishLists };
+const deleteWishList = async (req,res) => {
+
+  const userId = req.user.id;
+  const productId = req.params.productId;
+  const wishListInfo = await wishListModel.findOne({user:userId});
+
+      if (!wishListInfo) {
+        res.status(400).json({
+          code: 400,
+          success: true,
+          message: "wishlist not found",
+        });
+      }
+      if (!productId) {
+        res.status(400).json({
+          code: 400,
+          success: true,
+          message: "product not found",
+        });
+      }
+
+     wishListInfo.products.find((item) => item.product.equals(productId));
+  
+     await wishListModel.findOneAndUpdate(
+      {user : userId},
+      {
+        $pull : {products : {product : productId}}
+      }
+     )
+
+     res.status(200).json({
+      code: 200,
+      success: true,
+      message: "successfully removed wishList  ",
+    });
+
+
+
+}
+module.exports = { addToWishList, wishLists ,deleteWishList};
