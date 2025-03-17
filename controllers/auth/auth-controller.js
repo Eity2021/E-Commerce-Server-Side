@@ -48,7 +48,7 @@ const registerUser = async (req, res) => {
       name: name,
       email: email,
       phone: phone,
-      user_image:userImage,
+      user_image: userImage,
       password: hashPassword,
       role,
     });
@@ -78,7 +78,6 @@ const registerUser = async (req, res) => {
 };
 
 //login
-
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -119,15 +118,17 @@ const loginUser = async (req, res) => {
     });
   }
 };
-
 // userProfile
 const userProfile = async (req, res) => {
   try {
     if (!req.user || !req.user.id) {
       return res
         .status(401)
-        .json({ code:401,success:false,
-          message: "Unauthorized, token missing or invalid" });
+        .json({
+          code: 401,
+          success: false,
+          message: "Unauthorized, token missing or invalid",
+        });
     }
 
     const user = await userModel.findById(req.user.id).select("-password");
@@ -148,62 +149,83 @@ const userProfile = async (req, res) => {
       },
     });
   } catch (error) {
-      res.status(500).json({
-      code: 500, 
+    res.status(500).json({
+      code: 500,
       success: false,
-      message: "Internal Server error" });
+      message: "Internal Server error",
+    });
   }
 };
+// profileUpdate
+const profileUpdate = async (req, res) => {
+  try {
+    const userId = req?.user?.id;
+    // console.log("userId", userId)
+    const { name, email, phone } = req.body;
+    console.log("req.body", req.body);
 
-const profileUpdate = async(req,res) => {
-  
-  try{
-    const { name, email, password, phone } = req.body;
     const userImage = req?.file?.filename || "";
-    const  existingUser= await userModel.findById(req.user.id);
-    
+    console.log("userImage", userImage);
 
-    if(!existingUser){
+    const existingUser = await userModel.findById(userId);
+    console.log("existingUser", existingUser);
+
+    if (!userImage) {
       return res.status(400).json({
-        code:400,
-        success:false,
-        message:"User Not found"
-      })
+        code: 400,
+        success: false,
+        message: "image not found",
+      });
     }
 
-const userData = {
-  name, email, password, phone,user_image:userImage
-}
+    if (!existingUser) {
+      return res.status(400).json({
+        code: 400,
+        success: false,
+        message: "User Not found",
+      });
+    }
 
-if (password) {
-  const salt = await bcrypt.genSalt(10);
-  userData.password = await bcrypt.hash(password, salt);
-}
+    const userData = {
+      name,
+      email,
+      phone,
+      user_image: userImage,
+    };
+    console.log("Updating user with ID:", userId);
+    console.log("userData", userData);
+    // if (password) {
+    //   const salt = await bcrypt.genSalt(10);
+    //   userData.password = await bcrypt.hash(password, salt);
+    // }
 
-const updateUserProfile = await userModel.findByIdAndUpdate(
-      req.user.id,  { $set: userData },  {new:true}
-      
-    ).select("-password");
-if(!updateUserProfile) {
-  return res.status(404).json({
-    code:404,
-    success:false,
-    message:"Failed to update user"
-  })
-}
+    const updateUserProfile = await userModel.findByIdAndUpdate(
+      userId,
+      { $set: userData },
+      { new: true }
+    );
 
-res.status(201).json({
-  code:201,
-  success:true,
-  message:"User Successfully! update ",
-  data:updateUserProfile
-})
-  }catch(error){
+    if (!updateUserProfile) {
+      return res.status(404).json({
+        code: 404,
+        success: false,
+        message: "Failed to update user",
+      });
+    }
+    console.log("updateUserProfile:", updateUserProfile);
 
+    res.status(201).json({
+      code: 201,
+      success: true,
+      message: "User Successfully! update ",
+      data: updateUserProfile,
+    });
+  } catch (error) {
     res.status(500).json({
-      code: 500, 
+      code: 500,
       success: false,
-      message: "Internal Server error" });
+      message: "Internal Server error",
+    });
   }
-}
-module.exports = { registerUser, loginUser, userProfile,profileUpdate };
+};
+module.exports = { registerUser, loginUser, userProfile, profileUpdate };

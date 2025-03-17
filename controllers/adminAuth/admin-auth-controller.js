@@ -49,7 +49,7 @@ const adminLogin = async (req, res) => {
 
 const adminUpdate = async (req, res) => {
   try {
-    const { name, phone, email, password } = req.body;
+    const { name, phone, email } = req.body;
     const adminImage = req?.file?.filename || "";
 
     const existingAdmin = await adminModel.findById(req.admin.id);
@@ -65,15 +65,14 @@ const adminUpdate = async (req, res) => {
     const adminData = {
       name,
       email,
-      password,
       phone,
       admin_image: adminImage,
     };
 
-    if (password) {
-      const salt = await bcrypt.genSalt(10);
-      adminData.password = await bcrypt.hash(password, salt);
-    }
+    // if (password) {
+    //   const salt = await bcrypt.genSalt(10);
+    //   adminData.password = await bcrypt.hash(password, salt);
+    // }
 
     const updateAdminProfile = await adminModel.findByIdAndUpdate(
       req.admin.id,
@@ -103,8 +102,8 @@ const adminUpdate = async (req, res) => {
   }
 };
 
-const adminProfile = async (req,res) => {
-  try{
+const adminProfile = async (req, res) => {
+  try {
     if (!req.admin || !req.admin.id) {
       return res.status(401).json({
         code: 401,
@@ -112,9 +111,9 @@ const adminProfile = async (req,res) => {
         message: "Unauthorized, token missing or invalid",
       });
     }
-  
-    const admin = await adminModel.findById(req?.admin?.id).select("-password");
-  
+
+    const admin = await adminModel.findById(req?.admin?.id);
+
     if (!admin) {
       return res.status(404).json({
         code: 404,
@@ -122,23 +121,21 @@ const adminProfile = async (req,res) => {
         message: "admin not found",
       });
     }
-  
+
     res.status(201).json({
       code: 201,
       success: true,
       message: "data fetched",
       data: {
         admin,
-      }
+      },
     });
-  }catch(error){
+  } catch (error) {
     res.status(500).json({
       code: 500,
       success: false,
       message: "Internal server error",
     });
   }
-}
+};
 module.exports = { adminLogin, adminUpdate, adminProfile };
-
-
