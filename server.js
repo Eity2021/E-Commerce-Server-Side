@@ -14,6 +14,7 @@ const middleBannerRouter = require("./routes/banner/middleBannerRoute");
 const wishListRouter = require("./routes/wishList/wishListRoute");
 const checkoutRouter = require("./routes/checkOut/checkOutRoute");
 const orderRouter = require("./routes/order/orderRoute");
+const couponRouter = require("./routes/coupon/couponRoute");
 
 dotenv.config();
 mongoose
@@ -53,6 +54,7 @@ app.use("/api/middle", middleBannerRouter);
 app.use("/api/wish", wishListRouter);
 app.use("/api/checkedOut", checkoutRouter);
 app.use("/api/order", orderRouter);
+app.use("/api/coupon", couponRouter);
 
 app.get("/", (req, res) => {
   res.send("api working");
