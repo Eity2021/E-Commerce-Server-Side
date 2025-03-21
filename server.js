@@ -11,11 +11,11 @@ const subCategoriesRouter = require("./routes/subCategories/subCategoriesRoute")
 const adminRouter = require("./routes/auth/admin-auth-routes");
 const cartRouter = require("./routes/cart/cartRoute");
 const bannerRouter = require("./routes/banner/bannerRoute");
-const middleBannerRouter = require("./routes/banner/middleBannerRoute");
 const wishListRouter = require("./routes/wishList/wishListRoute");
 const checkoutRouter = require("./routes/checkOut/checkOutRoute");
 const orderRouter = require("./routes/order/orderRoute");
 const couponRouter = require("./routes/coupon/couponRoute");
+const middleBannerRouter = require("./routes/banner/middleBannerRoute");
 
 dotenv.config();
 mongoose
