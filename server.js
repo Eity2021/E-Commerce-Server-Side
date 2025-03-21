@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const serverless = require("serverless-http");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const authRouter = require("./routes/auth/auth-routes");
@@ -59,5 +60,5 @@ app.use("/api/coupon", couponRouter);
 app.get("/", (req, res) => {
   res.send("api working");
 });
-
+module.exports.handler = serverless(app);
 app.listen(PORT, () => console.log(`Server is now running on port ${PORT}`));
