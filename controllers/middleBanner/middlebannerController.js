@@ -1,5 +1,5 @@
 const { v4: uuidv4 } = require("uuid");
-const middleBannerModel = require("../../models/middleBannerModel");
+const middleBannerModel = require("../../models/middleABannerModel");
 
 const addMiddleBanner = async (req, res) => {
   try {
