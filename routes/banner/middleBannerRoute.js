@@ -3,7 +3,7 @@ const {
   multipleMiddleBannerUpload,
 } = require("../../middleware/multer");
 const adminAuthMiddleware = require("../../middleware/adminAuthMiddleware");
-const { addMiddleBanner, middleBannerDelete, middleBannerLists } = require("../../controllers/middleBanner/middleBannerController");
+const { addMiddleBanner, middleBannerDelete, middleBannerLists } = require("../../controllers/middleBanner/middlebannerControllersss");
 const middleBannerRouter = express.Router();
 
 middleBannerRouter.post(
