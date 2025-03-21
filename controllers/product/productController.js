@@ -6,20 +6,20 @@ const productList = async (req, res) => {
   try {
     const products = await productModel.find({});
     if (!products) {
-      res.status(404).json({
+      return res.status(404).json({
         code: 404,
         success: false,
         message: "Product not found",
       });
-    
-    res.status(200).json({ 
-      code: 200, 
-      success: true,
-      message:"product List fetched",
-       products 
-      });
-
  }
+
+ res.status(200).json({ 
+  code: 200, 
+  success: true,
+  message:"product List fetched",
+   products 
+  });
+
   } catch (error) {
     res.json({
       code: 500,
@@ -154,7 +154,7 @@ const singleProduct = async (req, res) => {
 };
 const removeProduct = async (req, res) => {
   try {
-    await productModel.findOneAndDelete(req.params.id);
+    await productModel.findByIdAndDelete(req.params.id);
     res.json({
       code: 200,
       success: true,
@@ -339,7 +339,7 @@ const getRecommendedProduct = async (req, res) => {
     const { productId } = req.params;
     const currentProduct = await productModel.findById(productId);
     if (!currentProduct) {
-      res.status(404).json({
+     return res.status(404).json({
         code: 404,
         success: false,
         message: "product not found",
@@ -382,3 +382,56 @@ module.exports = {
   getRelatedProducts,
   getRecommendedProduct,
 };
+
+
+// const getLowStockProducts = async (req, res) => {
+//   try {
+//     const lowStockProducts = await productModel.find({ countInStock: { $lt: 5 } });
+
+//     res.json({
+//       code: 200,
+//       success: true,
+//       message: "Low stock products fetched",
+//       products: lowStockProducts,
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       code: 500,
+//       success: false,
+//       message: error.message,
+//     });
+//   }
+// };
+
+
+// const checkStockAlert = async () => {
+//   const lowStockProducts = await productModel.find({ countInStock: { $lt: 5 } });
+
+//   if (lowStockProducts.length > 0) {
+//     console.log("Stock Alert! The following products are low in stock:");
+//     lowStockProducts.forEach((product) => {
+//       console.log(`${product.name} - Only ${product.countInStock} left`);
+//     });
+//     // Send email or push notification to admin here
+//   }
+// };
+
+
+// const getLowStockProducts = async (req, res) => {
+//   try {
+//     const lowStockProducts = await productModel.find({ countInStock: { $lt: 5 } });
+
+//     res.json({
+//       code: 200,
+//       success: true,
+//       message: "Low stock products fetched",
+//       products: lowStockProducts,
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       code: 500,
+//       success: false,
+//       message: error.message,
+//     });
+//   }
+// };

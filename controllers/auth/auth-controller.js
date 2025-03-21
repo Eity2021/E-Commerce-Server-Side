@@ -262,6 +262,23 @@ const changedPassword = async (req, res) => {
 };
 // logout
 // const logout = async (req,res) => // }
+//password reset
+
+const passwordReset = (req,res) => {
+
+  try{
+
+    const mailOptions = {
+      form :` "trendyCart Security " <${process.env.SMTP_EMAIL}>`,
+      to:email,
+      subject:"Reset Password"
+    }
+
+  }catch (error){
+
+  }
+}
+
 module.exports = {
   registerUser,
   loginUser,

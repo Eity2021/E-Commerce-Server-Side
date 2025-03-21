@@ -75,8 +75,8 @@ const perCouponCode = async (req, res) => {
 
 const perCouponCodeDelete = async (req, res) => {
   try {
-    const {userId}  = req.params;
-    console.log("userId", userId)
+    const { userId } = req.params;
+    console.log("userId", userId);
     const deleteCouponCode = await couponModel.findByIdAndDelete(userId);
 
     if (!deleteCouponCode) {
@@ -101,45 +101,48 @@ const perCouponCodeDelete = async (req, res) => {
   }
 };
 
-// const updateCoupon = async (req, res) => {
-//   try {
-//     const {userId} = req.params;
+const updateCoupon = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    if (!userId) {
+      return res.status(400).json({
+        code: 400,
+        success: false,
+        message: "Invalid coupon ID",
+      });
+    }
+    const updatedCoupon = await couponModel.findByIdAndUpdate(
+      userId,
+      req.body,
+      { new: true }
+    );
 
-//  if(!userId) {
-//     return res.status(400).json({
-//         code:400,
-//         success:false,
-//         message: "Invalid coupon ID" });
-//  }
-//  const updatedCoupon = await couponModel.findByIdAndUpdate(userId, req.body, { new: true, runValidators: true });
+    if (!updatedCoupon) {
+      return res.status(404).json({
+        code: 404,
+        success: false,
+        message: "Coupon  not found",
+      });
+    }
 
-//  if(!updatedCoupon){
-//    return res.status(404).json({
-//         code: 404,
-//         success: false,
-//         message: "Coupon  not found",
-//       });
-// }
-
-//  res.json({ 
-//     code:200,
-//     success:200,
-//     message: "Coupon updated successfully", 
-//     coupon: updatedCoupon 
-// });
-
-//   } catch (error) {
-//     res.status(500).json({
-//            code: 500,
-//           success: false,
-//              message: error.message,
-//              });
-//   }
-// };
+    res.json({
+      code: 200,
+      success: true,
+      message: "Coupon updated successfully",
+      coupon: updatedCoupon,
+    });
+  } catch (error) {
+    res.status(500).json({
+      code: 500,
+      success: false,
+      message: error.message,
+    });
+  }
+};
 module.exports = {
   addCoupon,
   couponLists,
   perCouponCode,
   perCouponCodeDelete,
-//   updateCoupon
+  updateCoupon,
 };
