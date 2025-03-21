@@ -1,4 +1,4 @@
-const productModel = require("../../models/productModel");
+const productModel = require("../../models/productWModel");
 const wishListModel = require("../../models/wishListModel");
 
 const addToWishList = async (req, res) => {
