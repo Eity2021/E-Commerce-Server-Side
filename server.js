@@ -21,10 +21,9 @@ const middleBannerRouter = require("./routes/banner/middleBannerRoute");
 
 dotenv.config();
 
-// MongoDB Connection
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB Connected"))
+  .then(() => console.log("Connected"))
   .catch((error) => console.log("MongoDB Error:", error));
 
 const app = express();
@@ -33,7 +32,7 @@ app.use(cors());
 app.use(cookieParser());
 app.use(express.json());
 
-// ✅ Prefix all routes with `/api`
+
 const router = express.Router();
 router.use("/adminAuth", adminRouter);
 router.use("/auth", authRouter);
@@ -48,7 +47,7 @@ router.use("/checkedOut", checkoutRouter);
 router.use("/order", orderRouter);
 router.use("/coupon", couponRouter);
 
-app.use("/api", router); // ✅ Ensure all routes are prefixed with `/api`
+app.use("/api", router); 
 
 // Test API Route
 app.get("/", (req, res) => {
