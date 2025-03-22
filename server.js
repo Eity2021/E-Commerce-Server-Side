@@ -3,8 +3,10 @@ const cors = require("cors");
 const serverless = require("serverless-http");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
-const authRouter = require("./routes/auth/auth-routes");
 const dotenv = require("dotenv");
+
+// Import routes
+const authRouter = require("./routes/auth/auth-routes");
 const productRouter = require("./routes/product/productRoute");
 const categoriesRouter = require("./routes/categories/categoriesRoute");
 const subCategoriesRouter = require("./routes/subCategories/subCategoriesRoute");
@@ -18,48 +20,40 @@ const couponRouter = require("./routes/coupon/couponRoute");
 const middleBannerRouter = require("./routes/banner/middleBannerRoute");
 
 dotenv.config();
+
+// MongoDB Connection
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected"))
-  .catch((error) => console.log(error));
+  .catch((error) => console.log("MongoDB Error:", error));
 
 const app = express();
 app.use(express.urlencoded({ extended: true }));
-
-const PORT = process.env.PORT || 5000;
-app.use(
-  cors({
-    origin: "*",
-    methods: ["GET", "POST", "DELETE", "PUT"],
-    allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-      "Cache-Control",
-      "Expires",
-      "Pragma",
-    ],
-    Credentials: true,
-  })
-);
-
+app.use(cors());
 app.use(cookieParser());
 app.use(express.json());
 
-app.use("/api/adminAuth", adminRouter);
-app.use("/api/auth", authRouter);
-app.use("/api/product", productRouter);
-app.use("/api/categories", categoriesRouter);
-app.use("/api/subCategories", subCategoriesRouter);
-app.use("/api/productCart", cartRouter);
-app.use("/api/banner", bannerRouter);
-app.use("/api/middle", middleBannerRouter);
-app.use("/api/wish", wishListRouter);
-app.use("/api/checkedOut", checkoutRouter);
-app.use("/api/order", orderRouter);
-app.use("/api/coupon", couponRouter);
+// ✅ Prefix all routes with `/api`
+const router = express.Router();
+router.use("/adminAuth", adminRouter);
+router.use("/auth", authRouter);
+router.use("/product", productRouter);
+router.use("/categories", categoriesRouter);
+router.use("/subCategories", subCategoriesRouter);
+router.use("/productCart", cartRouter);
+router.use("/banner", bannerRouter);
+router.use("/middle", middleBannerRouter);
+router.use("/wish", wishListRouter);
+router.use("/checkedOut", checkoutRouter);
+router.use("/order", orderRouter);
+router.use("/coupon", couponRouter);
 
+app.use("/api", router); // ✅ Ensure all routes are prefixed with `/api`
+
+// Test API Route
 app.get("/", (req, res) => {
-  res.send("api working");
+  res.send("API is working!");
 });
+
+// ✅ Correct serverless export for Vercel
 module.exports = serverless(app);
-// app.listen(PORT, () => console.log(`Server is now running on port ${PORT}`));
