@@ -20,7 +20,7 @@ const middleBannerRouter = require("./routes/banner/middleBannerRoute");
 dotenv.config();
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB Connected"))
+  .then(() => <></>)
   .catch((error) => console.log(error));
 
 const app = express();
