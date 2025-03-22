@@ -1,6 +1,11 @@
 const productModel = require("../../models/productModel");
 const categoriesModel = require("../../models/categoriesModel");
 const subCategoriesModel = require("../../models/subCategoriesModel");
+const uploadImageFile = require('../../utils/cloudinary')
+
+
+
+
 
 const productList = async (req, res) => {
   try {
@@ -11,15 +16,14 @@ const productList = async (req, res) => {
         success: false,
         message: "Product not found",
       });
- }
+    }
 
- res.status(200).json({ 
-  code: 200, 
-  success: true,
-  message:"product List fetched",
-   products 
-  });
-
+    res.status(200).json({
+      code: 200,
+      success: true,
+      message: "product List fetched",
+      products,
+    });
   } catch (error) {
     res.json({
       code: 500,
@@ -68,8 +72,22 @@ const addProduct = async (req, res) => {
       subCategories,
     };
 
-    var arrImages = req?.files?.map((file) => file?.filename);
 
+    // var arrImages = req?.files?.map((file) => file?.filename);
+  //   let arrImages = req?.files?.map((file) => {
+  //     const image =  uploadImageFile(file.path);
+  //     return image.url;
+  // });
+  let arrImages = [];
+  if (req.files && req.files.length > 0) {
+    arrImages = await Promise.all(
+      req.files.map(async (file) => {
+        const image = await uploadImageFile(file.path);
+        return image.url;
+      })
+    );
+  }
+    // console.log("req?.files", arrImages)
     const productData = {
       name,
       description,
@@ -96,15 +114,15 @@ const addProduct = async (req, res) => {
 
     const updatedProduct = await productModel.findByIdAndUpdate(
       products._id,
-      { $inc: { views: 1 } }, // Increase views by 1
-      { new: true } // Return updated product
+      { $inc: { views: 1 } }, 
+      { new: true } 
     );
 
     res.json({
       code: 200,
       success: true,
       message: "Successfully! Added Product",
-      updatedProduct,
+      data:updatedProduct,
     });
   } catch (error) {
     res.json({
@@ -120,6 +138,8 @@ const singleProduct = async (req, res) => {
       .findById(req.params.id)
       .populate("category", "_id category_name");
 
+
+   
     if (!product) {
       return res.json({
         code: 404,
@@ -128,6 +148,12 @@ const singleProduct = async (req, res) => {
       });
     }
 
+    if (product.image.length > 0) {
+      product.image = product.image.map(
+        (image) => image
+      );
+    }
+    // console.log("product.image", product.image)
     const subCategories = await subCategoriesModel
       .find({ category_id: product.category._id })
       .select("subCategory_name subCategories_image");
@@ -183,7 +209,28 @@ const updateProduct = async (req, res) => {
       countInStock,
     } = req.body;
 
-    const existingImages = req?.files?.map((file) => file?.filename || []);
+  //  const existingImages = req?.files?.map((file) => file?.filename || []);
+
+
+
+
+let existingImages = []
+    
+if(req?.files && req?.files?.length > 0){
+  existingImages = await Promise.all (
+    req?.files?.map( async (file) =>  {
+      const image = await uploadImageFile(file.path);
+      return image.url;
+    })
+  )
+
+}
+    
+    console.log( "existingImages", existingImages)
+   
+
+
+
     const existingProduct = await productModel.findById(req.params.id);
 
     if (!existingProduct) {
@@ -191,6 +238,7 @@ const updateProduct = async (req, res) => {
         code: 404,
         success: false,
         message: "product not found",
+        data:existingProduct
       });
     }
 
@@ -306,7 +354,7 @@ const getFilteredProducts = async (req, res) => {
 const getRelatedProducts = async (req, res) => {
   try {
     const { productId } = req.params;
-
+ console.log( "productId", productId);
     // Find the product by ID
     const currentProduct = await productModel.findById(productId);
     if (!currentProduct) {
@@ -338,8 +386,9 @@ const getRecommendedProduct = async (req, res) => {
   try {
     const { productId } = req.params;
     const currentProduct = await productModel.findById(productId);
+
     if (!currentProduct) {
-     return res.status(404).json({
+      return res.status(404).json({
         code: 404,
         success: false,
         message: "product not found",
@@ -361,7 +410,7 @@ const getRecommendedProduct = async (req, res) => {
       code: 200,
       success: true,
       message: "recommend product list",
-      recommendProducts
+      data:recommendProducts,
     });
   } catch (error) {
     res.status(500).json({
@@ -383,7 +432,6 @@ module.exports = {
   getRecommendedProduct,
 };
 
-
 // const getLowStockProducts = async (req, res) => {
 //   try {
 //     const lowStockProducts = await productModel.find({ countInStock: { $lt: 5 } });
@@ -403,7 +451,6 @@ module.exports = {
 //   }
 // };
 
-
 // const checkStockAlert = async () => {
 //   const lowStockProducts = await productModel.find({ countInStock: { $lt: 5 } });
 
@@ -415,7 +462,6 @@ module.exports = {
 //     // Send email or push notification to admin here
 //   }
 // };
-
 
 // const getLowStockProducts = async (req, res) => {
 //   try {
