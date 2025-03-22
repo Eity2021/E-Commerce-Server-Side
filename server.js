@@ -1,9 +1,9 @@
+const dotenv = require("dotenv");
 const express = require("express");
 const cors = require("cors");
 const serverless = require("serverless-http");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
-const dotenv = require("dotenv");
 
 // Import routes
 const authRouter = require("./routes/auth/auth-routes");
@@ -23,7 +23,7 @@ dotenv.config();
 
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => console.log("Connected"))
+  .then(() => console.log("MongoDB Connected Successfully"))
   .catch((error) => console.log("MongoDB Error:", error));
 
 const app = express();
