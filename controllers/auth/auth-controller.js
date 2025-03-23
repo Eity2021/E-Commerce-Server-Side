@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const validator = require("validator");
 const userModel = require("../../models/userModel");
+const uploadImageFile = require("../../utils/cloudinary");
 
 const createToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "7d" });
@@ -12,7 +13,6 @@ const registerUser = async (req, res) => {
 
   const userImage = req?.file?.filename || "";
   try {
-
     const checkEmail = await userModel.findOne({ email });
 
     if (checkEmail) {
@@ -23,14 +23,13 @@ const registerUser = async (req, res) => {
       });
     }
 
-
     if (!validator.isEmail(email)) {
       return res.status(400).json({
         success: false,
         message: "Please enter a valid email",
       });
     }
-  
+
     if (password.length < 8) {
       return res.status(400).json({
         success: false,
@@ -159,19 +158,14 @@ const profileUpdate = async (req, res) => {
     // console.log("userId", userId)
     const { name, email, phone } = req.body;
 
-    const userImage = req?.file?.filename || "";
+    let userImage = "";
+    userImage = req?.file;
+    const image = await uploadImageFile(userImage.path);
+    const updateImage = image.url;
 
+    //  const userImage = req?.file?.filename || "";
 
     const existingUser = await userModel.findById(userId);
-
-
-    // if (!userImage) {
-    //   return res.status(400).json({
-    //     code: 400,
-    //     success: false,
-    //     message: "image not found",
-    //   });
-    // }
 
     if (!existingUser) {
       return res.status(400).json({
@@ -185,7 +179,7 @@ const profileUpdate = async (req, res) => {
       name,
       email,
       phone,
-      user_image: userImage,
+      user_image: updateImage,
     };
 
     // if (password) {
@@ -206,7 +200,7 @@ const profileUpdate = async (req, res) => {
         message: "Failed to update user",
       });
     }
-    console.log("updateUserProfile:", updateUserProfile);
+    // console.log("updateUserProfile:", updateUserProfile);
 
     res.status(201).json({
       code: 201,
@@ -263,20 +257,15 @@ const changedPassword = async (req, res) => {
 // const logout = async (req,res) => // }
 //password reset
 
-const passwordReset = (req,res) => {
-
-  try{
-
-    const mailOptions = {
-      form :` "trendyCart Security " <${process.env.SMTP_EMAIL}>`,
-      to:email,
-      subject:"Reset Password"
-    }
-
-  }catch (error){
-
-  }
-}
+// const passwordReset = (req, res) => {
+//   try {
+//     const mailOptions = {
+//       form: ` "trendyCart Security " <${process.env.SMTP_EMAIL}>`,
+//       to: email,
+//       subject: "Reset Password",
+//     };
+//   } catch (error) {}
+// };
 
 module.exports = {
   registerUser,
