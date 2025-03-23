@@ -5,8 +5,6 @@ const uploadImageFile = require('../../utils/cloudinary')
 
 
 
-
-
 const productList = async (req, res) => {
   try {
     const products = await productModel.find({});

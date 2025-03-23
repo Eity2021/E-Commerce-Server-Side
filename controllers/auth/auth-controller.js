@@ -12,7 +12,7 @@ const registerUser = async (req, res) => {
 
   const userImage = req?.file?.filename || "";
   try {
-    // Check if email already exists
+
     const checkEmail = await userModel.findOne({ email });
 
     if (checkEmail) {
@@ -23,14 +23,14 @@ const registerUser = async (req, res) => {
       });
     }
 
-    // Validate email format
+
     if (!validator.isEmail(email)) {
       return res.status(400).json({
         success: false,
         message: "Please enter a valid email",
       });
     }
-    // Validate password length
+  
     if (password.length < 8) {
       return res.status(400).json({
         success: false,
@@ -60,18 +60,18 @@ const registerUser = async (req, res) => {
     // Send response
     res.status(201).json({
       code: 201,
+      success: true,
+      message: "Registration successful",
       data: {
         token,
       },
-      success: true,
-      message: "Registration successful",
     });
   } catch (e) {
     console.error("Error in registerUser:", e);
     res.status(500).json({
-      data: null,
       success: false,
       message: "Some error occurred",
+      data: null,
     });
   }
 };
@@ -158,21 +158,20 @@ const profileUpdate = async (req, res) => {
     const userId = req?.user?.id;
     // console.log("userId", userId)
     const { name, email, phone } = req.body;
-    console.log("req.body", req.body);
 
     const userImage = req?.file?.filename || "";
-    console.log("userImage", userImage);
+
 
     const existingUser = await userModel.findById(userId);
-    console.log("existingUser", existingUser);
 
-    if (!userImage) {
-      return res.status(400).json({
-        code: 400,
-        success: false,
-        message: "image not found",
-      });
-    }
+
+    // if (!userImage) {
+    //   return res.status(400).json({
+    //     code: 400,
+    //     success: false,
+    //     message: "image not found",
+    //   });
+    // }
 
     if (!existingUser) {
       return res.status(400).json({
