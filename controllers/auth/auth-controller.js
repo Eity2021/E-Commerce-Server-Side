@@ -253,6 +253,7 @@ const changedPassword = async (req, res) => {
     });
   }
 };
+
 // logout
 // const logout = async (req,res) => // }
 //password reset

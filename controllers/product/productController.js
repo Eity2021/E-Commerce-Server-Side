@@ -209,9 +209,6 @@ const updateProduct = async (req, res) => {
 
   //  const existingImages = req?.files?.map((file) => file?.filename || []);
 
-
-
-
 let existingImages = []
     
 if(req?.files && req?.files?.length > 0){
@@ -225,10 +222,7 @@ if(req?.files && req?.files?.length > 0){
 }
     
     console.log( "existingImages", existingImages)
-   
-
-
-
+  
     const existingProduct = await productModel.findById(req.params.id);
 
     if (!existingProduct) {

@@ -1,26 +1,29 @@
 const jwt = require("jsonwebtoken");
 
-const adminAuthMiddleware = (req,res,next) => {
-    
-    const adminToken = req.header("Authorization");
-    if(!adminToken){
+const adminAuthMiddleware = (req, res, next) => {
+    const authHeader = req.header("Authorization");
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return res.status(401).json({
-            code:401,
-            success:false,
-            message: "No admin token, authorization denied"
-        })
-    }
-    try{
-        const decoded = jwt.verify(adminToken,process.env.JWT_SECRET_ADMIN);
-        req.admin = decoded;
-        next();
-    }catch(error){
-        res.status(500).json({ 
-            code:500,
-            success:false,
-            message: "Invalid token" });
+            code: 401,
+            success: false,
+            message: "No admin token, authorization denied",
+        });
     }
 
-}
+    const token = authHeader.split(" ")[1]; // Extract the token part only
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET_ADMIN);
+        req.admin = decoded;
+        next();
+    } catch (error) {
+        res.status(401).json({
+            code: 401,
+            success: false,
+            message: "Invalid token",
+        });
+    }
+};
 
 module.exports = adminAuthMiddleware;
