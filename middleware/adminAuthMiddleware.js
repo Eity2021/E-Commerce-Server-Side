@@ -11,7 +11,7 @@ const adminAuthMiddleware = (req, res, next) => {
         });
     }
 
-    const token = authHeader.split(" ")[1]; // Extract the token part only
+    const token = authHeader.split(" ")[1];
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET_ADMIN);

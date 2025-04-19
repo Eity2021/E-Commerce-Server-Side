@@ -1,11 +1,17 @@
 const categoriesModel = require("../../models/categoriesModel");
 const subCategoriesModel = require("../../models/subCategoriesModel");
+const uploadImageFile = require("../../utils/cloudinary");
 
 const addCategories = async (req, res) => {
   try {
     const { category_name, color } = req.body;
 
-    const categoriesImage = req?.file?.filename;
+
+    let imageCat = "";
+    imageCat = req?.file;
+    const image = await uploadImageFile(imageCat.path);
+    const categoriesImage = image.url;
+    // const categoriesImage = req?.file?.filename;
 
     const categoriesData = {
       category_name,
