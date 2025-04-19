@@ -1,21 +1,28 @@
 const subCategoriesModel = require("../../models/subCategoriesModel");
+const uploadImageFile = require("../../utils/cloudinary");
 
 const addSubCategories = async (req, res) => {
   try {
     const { category_id, subCategory_name } = req.body;
 
-    const subCategoriesImage = req?.file?.filename;
+    let imageSubCat = "";
+    imageSubCat= req?.file;
+    const image = await uploadImageFile(imageSubCat.path) ;
+    const subCategoriesImage = image.url;
+
+
     const subCategoriesData = {
       category_id,
       subCategory_name,
       subCategories_image: subCategoriesImage,
     };
-    const subcategories = subCategoriesModel(subCategoriesData);
+    const subcategories = await subCategoriesModel(subCategoriesData);
     await subcategories.save();
-    res.json({
-      code: 200,
+    res.status(201).json({
+      code: 201,
       success: true,
       message: "Successfully! Added subCategory",
+      data:subcategories
     });
   } catch (error) {
     res.json({
