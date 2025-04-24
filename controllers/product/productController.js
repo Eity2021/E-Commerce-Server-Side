@@ -80,12 +80,17 @@ const addProduct = async (req, res) => {
   if (req.files && req.files.length > 0) {
     arrImages = await Promise.all(
       req.files.map(async (file) => {
-        const image = await uploadImageFile(file.path);
+        const image = await uploadImageFile(file?.path);
         return image.url;
       })
     );
   }
     // console.log("req?.files", arrImages)
+    // let primaryImage = ""
+    // primaryImage = req?.file;
+    // const image = await uploadImageFile(primaryImage?.path);
+    // const productPrimaryImage = image.url;
+
     const productData = {
       name,
       description,
@@ -104,6 +109,7 @@ const addProduct = async (req, res) => {
       popular: popular == "true" ? true : false,
       sizes: sizes ? JSON.parse(sizes) : [],
       image: arrImages,
+      // primary_Image:productPrimaryImage,
       date: Date.now(),
     };
 

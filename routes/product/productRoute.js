@@ -16,7 +16,7 @@ const adminAuthMiddleware = require("../../middleware/adminAuthMiddleware");
 
 const productRouter = express.Router();
 
-productRouter.post("/add", adminAuthMiddleware,multipleUpload, addProduct);
+productRouter.post("/add", adminAuthMiddleware,multipleUpload,addProduct);
 productRouter.delete("/remove/:id",adminAuthMiddleware, removeProduct);
 productRouter.get("/singleProduct/:id", singleProduct);
 productRouter.get("/productsList", productList);
