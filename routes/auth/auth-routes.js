@@ -11,5 +11,4 @@ router.put("/profileUpdate"  , singleUserUpload, authMiddleware, profileUpdate);
 router.put("/changedPassword" , authMiddleware, changedPassword);
 
 
-
 module.exports = router;

@@ -52,18 +52,16 @@ const registerUser = async (req, res) => {
     });
 
     const savedUser = await newUser.save();
-
     // Create token
     const token = createToken(savedUser._id);
-
+   const { password: _, ...userWithoutPassword } = savedUser.toObject();
     // Send response
     res.status(201).json({
       code: 201,
       success: true,
       message: "Registration successful",
-      data: {
-        token,
-      },
+      token,
+      data: userWithoutPassword,
     });
   } catch (e) {
     console.error("Error in registerUser:", e);
@@ -92,14 +90,18 @@ const loginUser = async (req, res) => {
 
     if (checkPasswordMatch) {
       const token = createToken(checkUser._id);
+      const { password, ...userWithoutPassword } = checkUser.toObject();
       res.json({
         code: 200,
         success: true,
         message: "login Successfully",
-        data: {
-          token,
-        },
+        token,
+        user: userWithoutPassword,
+        // data: {
+        //   savedUser
+        // },
       });
+      
     } else {
       res.json({
         code: 400,
