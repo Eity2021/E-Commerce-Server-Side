@@ -4,33 +4,8 @@ const subCategoriesModel = require("../../models/subCategoriesModel");
 const uploadImageFile = require('../../utils/cloudinary')
 
 
-
-const productList = async (req, res) => {
-  try {
-    const products = await productModel.find({});
-    if (!products) {
-      return res.status(404).json({
-        code: 404,
-        success: false,
-        message: "Product not found",
-      });
-    }
-
-    res.status(200).json({
-      code: 200,
-      success: true,
-      message: "product List fetched",
-      products,
-    });
-  } catch (error) {
-    res.json({
-      code: 500,
-      success: false,
-      message: error.message,
-    });
-  }
-};
 const addProduct = async (req, res) => {
+
   try {
     const {
       name,
@@ -48,9 +23,9 @@ const addProduct = async (req, res) => {
       views,
       countInStock,
     } = req.body;
-    const userIp =
-      req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+    const userIp =req.headers["x-forwarded-for"] || req.connection.remoteAddress;
     const category = await categoriesModel.findById(req.body.category);
+
 
     if (!category) {
       return res.status(404).json({
@@ -107,7 +82,7 @@ const addProduct = async (req, res) => {
       views,
       viewedBy: [userIp],
       popular: popular == "true" ? true : false,
-      sizes: sizes ? JSON.parse(sizes) : [],
+      sizes,
       image: arrImages,
       // primary_Image:productPrimaryImage,
       date: Date.now(),
@@ -136,6 +111,33 @@ const addProduct = async (req, res) => {
     });
   }
 };
+
+const productList = async (req, res) => {
+  try {
+    const products = await productModel.find({});
+    if (!products) {
+      return res.status(404).json({
+        code: 404,
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    res.status(200).json({
+      code: 200,
+      success: true,
+      message: "product List fetched",
+      products,
+    });
+  } catch (error) {
+    res.json({
+      code: 500,
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 const singleProduct = async (req, res) => {
   try {
     const product = await productModel
@@ -182,6 +184,7 @@ const singleProduct = async (req, res) => {
     });
   }
 };
+
 const removeProduct = async (req, res) => {
   try {
     await productModel.findByIdAndDelete(req.params.id);
@@ -250,7 +253,7 @@ if(req?.files && req?.files?.length > 0){
       rating,
       countInStock,
       popular: popular == "true" ? true : false,
-      sizes: sizes ? JSON.parse(sizes) : [],
+      sizes,
       image: existingImages,
       date: Date.now(),
     };

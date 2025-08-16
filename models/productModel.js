@@ -16,6 +16,7 @@ const productSchema = new mongoose.Schema({
     required: true,
   },
 
+
   countInStock: {
     type: Number,
     required: true,
@@ -40,7 +41,7 @@ const productSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  sizes: { type: Array, required: true },
+  sizes: [{ type: String }],
   popular: { type: Boolean },
   date: { type: Date, required: true },
   tags: [{ type: String }],

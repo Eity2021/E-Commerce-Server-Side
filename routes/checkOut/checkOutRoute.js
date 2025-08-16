@@ -3,7 +3,6 @@ const authMiddleware = require("../../middleware/authMiddleware");
 const { checkout, confirmCheckout } = require("../../controllers/checkOut/checkoutController");
 
 
-
 const checkoutRouter = express.Router();
 
 checkoutRouter.post("/checkout" , authMiddleware, checkout)

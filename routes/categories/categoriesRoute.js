@@ -6,6 +6,7 @@ const {
   perCategoryId,
   updateCategoryPerId,
   categoryList,
+  categoryWithProduct,
 } = require("../../controllers/categories/categoriesController");
 const adminAuthMiddleware = require("../../middleware/adminAuthMiddleware");
 
@@ -18,6 +19,7 @@ categoriesRouter.post(
   addCategories
 );
 categoriesRouter.get("/categoriesList", categoryList);
+categoriesRouter.get("/categoriesByProduct/:id", categoryWithProduct);
 categoriesRouter.delete("/delete/:id", adminAuthMiddleware, deleteCategory);
 categoriesRouter.get("/category/:id", perCategoryId);
 categoriesRouter.put(

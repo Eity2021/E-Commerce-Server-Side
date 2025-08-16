@@ -14,33 +14,41 @@ const adminLogin = async (req, res) => {
       return res.status(400).json({
         code: 400,
         success: false,
-        message: "admin not found",
+        message: "admin doesn't  exists!",
       });
     }
 
     // Compare hashed password
-    const isMatch = await bcrypt.compare(password, adminData.password);
-    if (!isMatch) {
-      return res.status(400).json({
-        code: 400,
-        success: false,
-        message: "Invalid Credentials",
-      });
-    }
+    const checkPasswordMatch = await bcrypt.compare(
+      password, 
+      adminData.password
+    );
 
+
+    if (!checkPasswordMatch) {
     const token = createToken(adminData._id);
+    const { password, ...adminWithoutPassword } = adminData.toObject();
+
 
     res.status(201).json({
       code: 201,
       success: true,
       message: "Admin Login successful",
+      token,
       data: {
-        token,
+        admin : adminWithoutPassword
       },
     });
+    } else {
+    res.status(400).json({
+        code: 400,
+        success: false,
+        message: "Invalid Credentials",
+      });
+    }
   } catch (e) {
-    console.error(e);
     res.status(500).json({
+      code:500,
       success: false,
       message: "Some error occurred",
     });

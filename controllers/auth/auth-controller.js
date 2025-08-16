@@ -54,7 +54,7 @@ const registerUser = async (req, res) => {
     const savedUser = await newUser.save();
     // Create token
     const token = createToken(savedUser._id);
-   const { password: _, ...userWithoutPassword } = savedUser.toObject();
+    const { password: _, ...userWithoutPassword } = savedUser.toObject();
     // Send response
     res.status(201).json({
       code: 201,
@@ -97,13 +97,9 @@ const loginUser = async (req, res) => {
         message: "login Successfully",
         token,
         user: userWithoutPassword,
-        // data: {
-        //   savedUser
-        // },
       });
-      
     } else {
-      res.json({
+      res.status(400).json({
         code: 400,
         success: false,
         message: "Invalid credentials",

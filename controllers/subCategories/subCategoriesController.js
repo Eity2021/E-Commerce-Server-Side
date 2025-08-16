@@ -131,9 +131,22 @@ const updateSubCategories = async (req, res) => {
   }
 };
 
+const   subCategoryWithProduct = async (req,res) => {
+ 
+  try{
+
+    
+
+  } catch {
+
+  }
+}
+
+
 module.exports = {
   addSubCategories,
   SubCategoriesList,
   deleteSubCategories,
   updateSubCategories,
+  subCategoryWithProduct
 };

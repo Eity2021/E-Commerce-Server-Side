@@ -1,4 +1,5 @@
 const categoriesModel = require("../../models/categoriesModel");
+const productModel = require("../../models/productModel");
 const subCategoriesModel = require("../../models/subCategoriesModel");
 const uploadImageFile = require("../../utils/cloudinary");
 
@@ -166,10 +167,34 @@ const deleteCategory = async (req, res) => {
   }
 };
 
+const categoryWithProduct = async(req,res) => {
+  try{
+    const {id} = req.params;
+    const products = await productModel.find({ category: id }).populate("category");
+    console.log("product", products);
+
+    res.status(200).json({
+       code:200,
+       success: true, 
+       data: products 
+      });
+
+  } catch(error){
+
+    res.status(500).json({ 
+    code: 500, 
+    success: false,
+    message: error.message
+   });
+  }
+}
+
+
 module.exports = {
   addCategories,
   deleteCategory,
   perCategoryId,
   updateCategoryPerId,
   categoryList,
+  categoryWithProduct
 };
