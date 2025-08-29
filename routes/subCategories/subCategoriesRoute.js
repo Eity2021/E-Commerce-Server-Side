@@ -5,6 +5,7 @@ const {
   SubCategoriesList,
   deleteSubCategories,
   updateSubCategories,
+  subCategoryWithProduct,
 } = require("../../controllers/subCategories/subCategoriesController");
 const adminAuthMiddleware = require("../../middleware/adminAuthMiddleware");
 
@@ -17,7 +18,12 @@ subCategoriesRouter.post(
   addSubCategories
 );
 subCategoriesRouter.get("/subCategoriesList", SubCategoriesList);
-subCategoriesRouter.delete("/subCategoryDelete/:id", adminAuthMiddleware,deleteSubCategories);
+subCategoriesRouter.get("/subCategoriesByProduct/:id", subCategoryWithProduct);
+subCategoriesRouter.delete(
+  "/subCategoryDelete/:id",
+  adminAuthMiddleware,
+  deleteSubCategories
+);
 subCategoriesRouter.put(
   "/updateSubCategory/:id",
   adminAuthMiddleware,

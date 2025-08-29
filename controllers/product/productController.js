@@ -1,16 +1,16 @@
 const productModel = require("../../models/productModel");
 const categoriesModel = require("../../models/categoriesModel");
 const subCategoriesModel = require("../../models/subCategoriesModel");
-const uploadImageFile = require('../../utils/cloudinary')
-
+const uploadImageFile = require("../../utils/cloudinary");
 
 const addProduct = async (req, res) => {
-
   try {
     const {
       name,
       description,
       price,
+      category,
+      subCategory,
       sizes,
       popular,
       numberReview,
@@ -23,9 +23,9 @@ const addProduct = async (req, res) => {
       views,
       countInStock,
     } = req.body;
-    const userIp =req.headers["x-forwarded-for"] || req.connection.remoteAddress;
-    const category = await categoriesModel.findById(req.body.category);
-
+    const userIp =
+      req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+    // const category = await categoriesModel.findById(req.body.category);
 
     if (!category) {
       return res.status(404).json({
@@ -35,31 +35,30 @@ const addProduct = async (req, res) => {
       });
     }
 
-    const subCategories = await subCategoriesModel
-      .find({ category_id: category._id })
-      .select("subCategory_name subCategories_image");
+    // const subCategories = await subCategoriesModel
+    //   .find({ category_id: category._id })
+    //   .select("subCategory_name subCategories_image");
 
-    const categoryWithSubcategories = {
-      _id: category._id,
-      category_name: category.category_name,
-      subCategories,
-    };
-
+    // const categoryWithSubcategories = {
+    //   _id: category._id,
+    //   category_name: category.category_name,
+    //   subCategories,
+    // };
 
     // var arrImages = req?.files?.map((file) => file?.filename);
-  //   let arrImages = req?.files?.map((file) => {
-  //     const image =  uploadImageFile(file.path);
-  //     return image.url;
-  // });
-  let arrImages = [];
-  if (req.files && req.files.length > 0) {
-    arrImages = await Promise.all(
-      req.files.map(async (file) => {
-        const image = await uploadImageFile(file?.path);
-        return image.url;
-      })
-    );
-  }
+    //   let arrImages = req?.files?.map((file) => {
+    //     const image =  uploadImageFile(file.path);
+    //     return image.url;
+    // });
+    let arrImages = [];
+    if (req.files && req.files.length > 0) {
+      arrImages = await Promise.all(
+        req.files.map(async (file) => {
+          const image = await uploadImageFile(file?.path);
+          return image.url;
+        })
+      );
+    }
     // console.log("req?.files", arrImages)
     // let primaryImage = ""
     // primaryImage = req?.file;
@@ -70,7 +69,9 @@ const addProduct = async (req, res) => {
       name,
       description,
       price: Number(price),
-      category: categoryWithSubcategories,
+      // category: categoryWithSubcategories,
+      category,
+      subCategory,
       numberReview,
       inFeatured,
       newProduct,
@@ -93,15 +94,15 @@ const addProduct = async (req, res) => {
 
     const updatedProduct = await productModel.findByIdAndUpdate(
       products._id,
-      { $inc: { views: 1 } }, 
-      { new: true } 
+      { $inc: { views: 1 } },
+      { new: true }
     );
 
     res.json({
       code: 200,
       success: true,
       message: "Successfully! Added Product",
-      data:updatedProduct,
+      data: updatedProduct,
     });
   } catch (error) {
     res.json({
@@ -144,8 +145,6 @@ const singleProduct = async (req, res) => {
       .findById(req.params.id)
       .populate("category", "_id category_name");
 
-
-   
     if (!product) {
       return res.json({
         code: 404,
@@ -155,9 +154,7 @@ const singleProduct = async (req, res) => {
     }
 
     if (product.image.length > 0) {
-      product.image = product.image.map(
-        (image) => image
-      );
+      product.image = product.image.map((image) => image);
     }
     // console.log("product.image", product.image)
     const subCategories = await subCategoriesModel
@@ -216,22 +213,21 @@ const updateProduct = async (req, res) => {
       countInStock,
     } = req.body;
 
-  //  const existingImages = req?.files?.map((file) => file?.filename || []);
+    //  const existingImages = req?.files?.map((file) => file?.filename || []);
 
-let existingImages = []
-    
-if(req?.files && req?.files?.length > 0){
-  existingImages = await Promise.all (
-    req?.files?.map( async (file) =>  {
-      const image = await uploadImageFile(file.path);
-      return image.url;
-    })
-  )
+    let existingImages = [];
 
-}
-    
-    console.log( "existingImages", existingImages)
-  
+    if (req?.files && req?.files?.length > 0) {
+      existingImages = await Promise.all(
+        req?.files?.map(async (file) => {
+          const image = await uploadImageFile(file.path);
+          return image.url;
+        })
+      );
+    }
+
+    console.log("existingImages", existingImages);
+
     const existingProduct = await productModel.findById(req.params.id);
 
     if (!existingProduct) {
@@ -239,7 +235,7 @@ if(req?.files && req?.files?.length > 0){
         code: 404,
         success: false,
         message: "product not found",
-        data:existingProduct
+        data: existingProduct,
       });
     }
 
@@ -355,7 +351,7 @@ const getFilteredProducts = async (req, res) => {
 const getRelatedProducts = async (req, res) => {
   try {
     const { productId } = req.params;
- console.log( "productId", productId);
+    console.log("productId", productId);
     // Find the product by ID
     const currentProduct = await productModel.findById(productId);
     if (!currentProduct) {
@@ -411,7 +407,7 @@ const getRecommendedProduct = async (req, res) => {
       code: 200,
       success: true,
       message: "recommend product list",
-      data:recommendProducts,
+      data: recommendProducts,
     });
   } catch (error) {
     res.status(500).json({

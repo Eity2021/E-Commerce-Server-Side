@@ -1,15 +1,15 @@
-const subCategoriesModel = require("../../models/subCategoriesModel");
 const uploadImageFile = require("../../utils/cloudinary");
+const productModel = require("../../models/productModel");
+const subCategoriesModel = require("../../models/subCategoriesModel");
 
 const addSubCategories = async (req, res) => {
   try {
     const { category_id, subCategory_name } = req.body;
 
     let imageSubCat = "";
-    imageSubCat= req?.file;
-    const image = await uploadImageFile(imageSubCat.path) ;
+    imageSubCat = req?.file;
+    const image = await uploadImageFile(imageSubCat.path);
     const subCategoriesImage = image.url;
-
 
     const subCategoriesData = {
       category_id,
@@ -22,7 +22,7 @@ const addSubCategories = async (req, res) => {
       code: 201,
       success: true,
       message: "Successfully! Added subCategory",
-      data:subcategories
+      data: subcategories,
     });
   } catch (error) {
     res.json({
@@ -131,22 +131,33 @@ const updateSubCategories = async (req, res) => {
   }
 };
 
-const   subCategoryWithProduct = async (req,res) => {
- 
-  try{
+const subCategoryWithProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const products = await productModel
+      .find({ subCategory: id })
+      .populate("subCategory");
 
-    
-
-  } catch {
-
+    return res.status(200).json({
+      code: 200,
+      success: true,
+      count: products.length,
+      products,
+    });
+  } catch (error) {
+    console.error("Error:", error.message);
+    return res.status(400).json({
+      code: 400,
+      success: false,
+      message: error.message,
+    });
   }
-}
-
+};
 
 module.exports = {
   addSubCategories,
   SubCategoriesList,
   deleteSubCategories,
   updateSubCategories,
-  subCategoryWithProduct
+  subCategoryWithProduct,
 };
