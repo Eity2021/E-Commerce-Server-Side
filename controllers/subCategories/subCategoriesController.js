@@ -1,6 +1,5 @@
-const uploadImageFile = require("../../utils/cloudinary");
-const productModel = require("../../models/productModel");
 const subCategoriesModel = require("../../models/subCategoriesModel");
+const uploadImageFile = require("../../utils/cloudinary");
 
 const addSubCategories = async (req, res) => {
   try {
@@ -131,33 +130,10 @@ const updateSubCategories = async (req, res) => {
   }
 };
 
-const subCategoryWithProduct = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const products = await productModel
-      .find({ subCategory: id })
-      .populate("subCategory");
-
-    return res.status(200).json({
-      code: 200,
-      success: true,
-      count: products.length,
-      products,
-    });
-  } catch (error) {
-    console.error("Error:", error.message);
-    return res.status(400).json({
-      code: 400,
-      success: false,
-      message: error.message,
-    });
-  }
-};
-
 module.exports = {
   addSubCategories,
   SubCategoriesList,
   deleteSubCategories,
   updateSubCategories,
-  subCategoryWithProduct,
+  // subCategoryWithProduct,
 };

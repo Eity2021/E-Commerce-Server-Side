@@ -7,6 +7,7 @@ const addCategories = async (req, res) => {
   try {
     const { category_name, color } = req.body;
 
+
     let imageCat = "";
     imageCat = req?.file;
     const image = await uploadImageFile(imageCat.path);
@@ -166,26 +167,28 @@ const deleteCategory = async (req, res) => {
   }
 };
 
-const categoryWithProduct = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const products = await productModel
-      .find({ category: id })
-      .populate("category");
+const categoryWithProduct = async(req,res) => {
+  try{
+    const {id} = req.params;
+    const products = await productModel.find({ category: id }).populate("category");
+    console.log("product", products);
 
     res.status(200).json({
-      code: 200,
-      success: true,
-      data: products,
-    });
-  } catch (error) {
-    res.status(500).json({
-      code: 500,
-      success: false,
-      message: error.message,
-    });
+       code:200,
+       success: true, 
+       data: products 
+      });
+
+  } catch(error){
+
+    res.status(500).json({ 
+    code: 500, 
+    success: false,
+    message: error.message
+   });
   }
-};
+}
+
 
 module.exports = {
   addCategories,
@@ -193,5 +196,5 @@ module.exports = {
   perCategoryId,
   updateCategoryPerId,
   categoryList,
-  categoryWithProduct,
+  categoryWithProduct
 };
